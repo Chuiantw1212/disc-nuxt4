@@ -12,22 +12,22 @@
         </div>
         <form id="disc-form">
             <div id="questions-container" class="space-y-4">
-                <div class="form__question">
+                <div v-for="(quiz, index) in shuffledArray" :key="index" class="form__question">
                     <h4 class="text-lg font-semibold text-gray-800 mb-3 sm:mb-0 sm:mr-4">大家都說我是可以說心事的朋友</h4>
                     <div class="question__options">
                         <label>
-                            <input type="radio" value="0" class="sr-only option__input">
+                            <input v-model="quiz.value" type="radio" value="0" class="sr-only option__input">
                             <span class="rating-label">非常<br>不像我</span>
                         </label><label>
-                            <input type="radio" value="2" class="sr-only option__input">
+                            <input v-model="quiz.value" type="radio" value="2" class="sr-only option__input">
                             <span class="rating-label">不像我</span>
                         </label><label>
-                            <input type="radio" value="3" class="sr-only option__input">
+                            <input v-model="quiz.value" type="radio" value="3" class="sr-only option__input">
                             <span class="rating-label">普通</span>
                         </label><label>
-                            <input type="radio" value="7" class="sr-only option__input"><span
+                            <input v-model="quiz.value" type="radio" value="7" class="sr-only option__input"><span
                                 class="rating-label">像我</span>
-                        </label><label><input type="radio" value="9" class="sr-only option__input"><span
+                        </label><label><input v-model="form" type="radio" value="9" class="sr-only option__input"><span
                                 class="rating-label">非常<br>像我</span></label>
                     </div>
                 </div>
@@ -43,14 +43,6 @@
     </div>
 </template>
 <script setup lang="ts">
-const props = defineProps({
-    quizData: {
-        type: Object,
-        default: {}
-    }
-})
-
-// --- DATA ---
 const quizData = [{
     text: "在生活中，我還是很講求效率",
     trait: "D"
@@ -101,9 +93,36 @@ const quizData = [{
     trait: "C"
 }]
 
-const form = ref({
+const shuffledArray = ref<any>([])
 
+onMounted(() => {
+    shuffledArray.value = shuffleArray(quizData)
+    shuffledArray.value.forEach((obj: any) => {
+        obj.value = 0
+    });
 })
+
+const form = ref([])
+
+function shuffleArray(array: Array<any>) {
+    let currentIndex = array.length;
+    let randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex !== 0) {
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex],
+            array[currentIndex],
+        ];
+    }
+
+    return array;
+}
 
 </script>
 <style lang="scss" scoped>
