@@ -13,7 +13,7 @@
         <form id="disc-form">
             <div id="questions-container" class="space-y-4">
                 <div v-for="(quiz, index) in shuffledArray" :key="index" class="form__question">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-3 sm:mb-0 sm:mr-4">大家都說我是可以說心事的朋友</h4>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-3 sm:mb-0 sm:mr-4">{{ quiz.text }}</h4>
                     <div class="question__options">
                         <label>
                             <input v-model="quiz.value" type="radio" value="0" class="sr-only option__input">
@@ -27,8 +27,8 @@
                         </label><label>
                             <input v-model="quiz.value" type="radio" value="7" class="sr-only option__input"><span
                                 class="rating-label">像我</span>
-                        </label><label><input v-model="form" type="radio" value="9" class="sr-only option__input"><span
-                                class="rating-label">非常<br>像我</span></label>
+                        </label><label><input v-model="quiz.value" type="radio" value="9"
+                                class="sr-only option__input"><span class="rating-label">非常<br>像我</span></label>
                     </div>
                 </div>
             </div>
@@ -98,11 +98,9 @@ const shuffledArray = ref<any>([])
 onMounted(() => {
     shuffledArray.value = shuffleArray(quizData)
     shuffledArray.value.forEach((obj: any) => {
-        obj.value = 0
+        obj.value = null
     });
 })
-
-const form = ref([])
 
 function shuffleArray(array: Array<any>) {
     let currentIndex = array.length;
