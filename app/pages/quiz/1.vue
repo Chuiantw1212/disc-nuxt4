@@ -33,16 +33,33 @@
                 </div>
             </div>
             <div class="mt-12 flex justify-between items-center">
-                <button id="prev-btn" type="button"
-                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg transition duration-300"
-                    style="display: none;">上一頁</button>
                 <button id="next-btn" type="button"
-                    class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">下一頁</button>
+                    class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
+                    @click="setQuizData()">下一頁</button>
             </div>
         </form>
+        <el-button plain @click="dialogVisible = true">
+            Click to open the Dialog
+        </el-button>
+
+        <el-dialog v-model="dialogVisible" title="Tips" width="500" :before-close="handleClose">
+            <span>This is a message</span>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="dialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="dialogVisible = false">
+                        Confirm
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 <script setup lang="ts">
+import { ElMessageBox } from 'element-plus'
+const router = useRouter()
+const discStore = useDiscStore()
+const dialogVisible = ref(false)
 const quizData = [{
     text: "在生活中，我還是很講求效率",
     trait: "D"
@@ -101,6 +118,25 @@ onMounted(() => {
         obj.value = null
     });
 })
+
+function handleClose(done: () => void) {
+    ElMessageBox.confirm('Are you sure to close this dialog?')
+        .then(() => {
+            done()
+        })
+        .catch(() => {
+            // catch error
+        })
+}
+
+function setQuizData() {
+    const hasSomeEmpty: boolean = shuffledArray.value.some((q: any) => !q.value)
+    if (hasSomeEmpty) {
+        alert('clicked action button!')
+        return
+    }
+    discStore.setQuizData1(shuffledArray.value)
+}
 
 function shuffleArray(array: Array<any>) {
     let currentIndex = array.length;
