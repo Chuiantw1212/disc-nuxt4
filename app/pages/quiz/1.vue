@@ -48,10 +48,8 @@
 </template>
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import type { MessagePlacement, MessageType } from 'element-plus'
 const router = useRouter()
 const discStore = useDiscStore()
-const dialogVisible = ref<boolean>(false)
 const quizData = [{
     text: "在生活中，我還是很講求效率",
     trait: "D"
@@ -107,16 +105,14 @@ const shuffledArray = ref<any>([])
 onMounted(() => {
     shuffledArray.value = shuffleArray(quizData)
     shuffledArray.value.forEach((obj: any) => {
-        obj.value = null
+        obj.value = ''
     });
 })
 
 function setQuizData() {
-    const hasSomeEmpty: boolean = shuffledArray.value.some((q: any) => !q.value)
     const emptyIndex: number = Array.from(shuffledArray.value).findIndex((q: any) => {
-        return !q.value && Number(q.value) !== 0
+        return q.value === ''
     })
-    console.log(shuffledArray.value)
     if (emptyIndex !== -1) {
         const emptyQ = shuffledArray.value[emptyIndex]
         ElMessage({
@@ -127,6 +123,9 @@ function setQuizData() {
         return
     }
     discStore.setQuizData1(shuffledArray.value)
+    router.push({
+        name: 'quiz-2'
+    })
 }
 
 function shuffleArray(array: Array<any>) {
