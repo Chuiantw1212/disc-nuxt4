@@ -125,14 +125,30 @@ function findCharacterMatch(naturalScore: IScore, workScore: IScore) {
     // }
 
     const natualTraits = sortTraits(naturalScore) as any
-    const primaryNaturalWeight = natualTraits[0][0]
-    const secondaryNatualWeight = natualTraits[1][0]
+    const primaryNatural = natualTraits[0][0]
+    const secondaryNatual = natualTraits[1][0]
 
     const workTraits = sortTraits(workScore) as any
-    const primaryWorkWeight = workTraits[0][0]
-    const secondaryWorkWeight = workTraits[1][0]
+    const primaryWork = workTraits[0][0]
+    const secondaryWork = workTraits[1][0]
 
+    const nonEasterEggeCharacters = props.demonSlayerCharacters.filter((c: any) => !c.isEasterEgg)
+    const primaryNaturalChar = primaryNatural.toUpperCase();
+    const primaryWorkChar = primaryWork.toUpperCase();
     
+    // --- 規則一：如果使用者內外風格一致，則排除掉「完美對角」的角色 ---
+    let remainingCharacters = []
+    if (primaryNaturalChar === primaryWorkChar) {
+        const perfectlyOppositeCharacters = ["胡蝶忍", "童磨", "猗窩座", "半天狗", "不死川實彌", "竈門禰豆子"];
+        remainingCharacters = nonEasterEggeCharacters.filter((c: any) => {
+            return !perfectlyOppositeCharacters.includes(c.name)
+        })
+    } else {
+        remainingCharacters = nonEasterEggeCharacters
+    }
+    remainingCharacters.map(c => {
+
+    })
 }
 
 // function findCharacterMatch(scoresNatural, scoresWork) {
