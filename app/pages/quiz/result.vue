@@ -102,6 +102,7 @@ onMounted(() => {
     console.log({
         characters
     })
+    drawCharts(naturalScore, workScore)
 })
 
 function calculateScore(quizData: IQuizOption[]) {
@@ -221,4 +222,68 @@ function findCharacterMatch(naturalScore: IScore, workScore: IScore) {
         return props.demonSlayerCharacters.find(c => c.name === "竈門炭治郎")
     }
 }
+
+function drawCharts(naturalScore: IScore, workScore: IScore) {
+    const analysisSections = [{
+        id: 'natural',
+        title: "1. 你的真實風格 (核心自我)",
+        scores: naturalScore,
+        context: 'natural'
+    }, {
+        id: 'work',
+        title: "2. 你的外顯模樣 (公開形象)",
+        scores: workScore,
+        context: 'work'
+    }];
+}
+
+function createRadarChart(canvasId, scores) {
+    if (charts[canvasId]) {
+        charts[canvasId].destroy();
+    }
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    charts[canvasId] = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['D', 'i', 'S', 'C'],
+            datasets: [{
+                label: '分數',
+                data: [scores.D, scores.I, scores.S, scores.C],
+                backgroundColor: `rgba(20, 184, 166, 0.2)`,
+                borderColor: `rgba(13, 148, 136, 1)`,
+                pointBackgroundColor: `rgba(13, 148, 136, 1)`,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(13, 148, 136)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 36,
+                    ticks: {
+                        stepSize: 9
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        }
+                    },
+                    startAngle: -45
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
 </script>
