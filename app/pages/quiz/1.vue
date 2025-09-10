@@ -13,22 +13,28 @@
         <form id="disc-form">
             <div id="questions-container" class="space-y-4">
                 <div v-for="(quiz, index) in shuffledArray" :key="index" class="form__question">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-3 sm:mb-0 sm:mr-4">{{ quiz.text }}</h4>
+                    <h4 class="question__text">{{ quiz.text }}</h4>
                     <div class="question__options">
-                        <label>
+                        <label class="options__label">
                             <input v-model="quiz.value" type="radio" value="0" class="sr-only option__input">
                             <span class="rating-label">非常<br>不像我</span>
-                        </label><label>
+                        </label>
+                        <label class="options__label">
                             <input v-model="quiz.value" type="radio" value="2" class="sr-only option__input">
                             <span class="rating-label">不像我</span>
-                        </label><label>
+                        </label>
+                        <label class="options__label">
                             <input v-model="quiz.value" type="radio" value="3" class="sr-only option__input">
                             <span class="rating-label">普通</span>
-                        </label><label>
+                        </label>
+                        <label class="options__label">
                             <input v-model="quiz.value" type="radio" value="7" class="sr-only option__input"><span
                                 class="rating-label">像我</span>
-                        </label><label><input v-model="quiz.value" type="radio" value="9"
-                                class="sr-only option__input"><span class="rating-label">非常<br>像我</span></label>
+                        </label>
+                        <label class="options__label">
+                            <input v-model="quiz.value" type="radio" value="9" class="sr-only option__input"><span
+                                class="rating-label">非常<br>像我</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -144,11 +150,24 @@ function shuffleArray(array: Array<any>) {
 <style lang="scss" scoped>
 .form__question {
     text-align: center;
+    border-bottom: 1px lightgrey solid;
+    padding: 16px 0;
+
+
+    .question__text {
+        font-weight: 600;
+        font-size: 18px;
+        padding: 0px;
+    }
 
     .question__options {
         display: flex;
         justify-content: center;
         gap: 0.5rem;
+
+        .options__label {
+            line-height: 0px;
+        }
     }
 
     .option__input {
