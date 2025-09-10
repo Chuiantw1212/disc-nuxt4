@@ -45,4 +45,137 @@
     </div>
 </template>
 <script setup lang="ts">
+const discStore = useDiscStore()
+
+// const totalParts = ref<any[]>([])
+const quizNatural = ref<any[]>([])
+const quizWork = ref<any[]>([])
+interface IQuizOption {
+    text: string,
+    trait: 'D' | 'I' | 'S' | 'C',
+    value: string
+}
+onMounted(() => {
+    quizNatural.value = discStore.quizData1
+    quizWork.value = discStore.quizData2
+    // totalParts.value = [...quizData1, ...quizData2]
+    calculateScore(quizNatural.value)
+})
+
+function calculateScore(quizData: any[]) {
+    const score: {
+        D: number,
+        I: number,
+        S: number,
+        C: number,
+    } = {
+        D: 0,
+        I: 0,
+        S: 0,
+        C: 0
+    }
+    quizData.forEach((q: IQuizOption) => {
+        score[q.trait] += Number(q.value)
+    })
+    return score
+}
+
+function findCharacterMatch(scoresNatural, scoresWork) {
+    const sortedNatural = getTraitsSorted(scoresNatural)
+        , sortedWork = getTraitsSorted(scoresWork);
+    if (!sortedNatural.length || !sortedWork.length)
+        return [demonSlayerCharacters.find(c => c.name === "村田")];
+
+    const allScoresNatural = Object.values(scoresNatural);
+    const maxScoreNatural = Math.max(...allScoresNatural)
+        , minScoreNatural = Math.min(...allScoresNatural);
+    if (maxScoreNatural - minScoreNatural <= 7) {
+        const murata = demonSlayerCharacters.find(c => c.isEasterEgg);
+        if (murata)
+            return [murata];
+    }
+
+    const primaryNatural = sortedNatural[0][0]
+        , secondaryNatural = sortedNatural[1][0];
+    const primaryWork = sortedWork[0][0]
+        , secondaryWork = sortedWork[1][0];
+
+    const scoredCharacters = demonSlayerCharacters.filter(c => !c.isEasterEgg).map(c => {
+        let prerequisiteMet = true;
+
+        // --- 規則一：如果使用者內外風格一致，則排除掉「完美對角」的角色 ---
+        const primaryNaturalChar = primaryNatural.toUpperCase();
+        const primaryWorkChar = primaryWork.toUpperCase();
+
+        if (primaryNaturalChar === primaryWorkChar) {
+            const perfectlyOppositeCharacters = ["胡蝶忍", "童磨", "猗窩座", "半天狗", "不死川實彌", "竈門禰豆子"];
+
+            if (perfectlyOppositeCharacters.includes(c.name)) {
+                prerequisiteMet = false;
+            }
+        }
+
+        if (c.lowTrait) {
+            // --- 規則二：調整無慘的出現條件 ---
+            if (c.name === "鬼舞辻無慘") {
+                if (scoresWork['S'] >= 10 || scoresNatural['S'] >= 10) {
+                    prerequisiteMet = false;
+                }
+            } else if (c.lowTraitContext === 'outer' && scoresWork[c.lowTrait] >= 12) {
+                prerequisiteMet = false;
+            } else if (c.lowTraitContext === 'inner' && scoresNatural[c.lowTrait] >= 12) {
+                prerequisiteMet = false;
+            }
+        }
+
+        if (!prerequisiteMet)
+            return {
+                ...c,
+                score: 0
+            };
+
+        // --- 計算基礎分數 ---
+        let score = 0;
+        const outer = c.outer.toUpperCase()
+            , inner = c.inner.toUpperCase();
+        if (outer.includes(primaryWork))
+            score += 2;
+        if (inner.includes(primaryNatural))
+            score += 2;
+        if (outer.includes(secondaryWork))
+            score += 1;
+        if (inner.includes(secondaryNatural))
+            score += 1;
+        if (outer.includes(primaryNatural))
+            score += 0.5;
+        if (inner.includes(primaryWork))
+            score += 0.5;
+        if (c.role.includes('柱'))
+            score += 1;
+
+        // --- 規則三：手動調整角色權重 ---
+
+        // 調低權重
+        if (c.name === "半天狗" || c.name === "玉壺") {
+            score -= 2;
+        }
+
+        // 調高權重
+        if (c.name === "我妻善逸" || c.name === "竈門禰豆子" || c.name === "嘴平伊之助") {
+            score += 1;
+        }
+        if (c.name === "猗窩座") {
+            score += 1;
+        }
+
+        return {
+            ...c,
+            score
+        };
+    }
+    );
+    scoredCharacters.sort((a, b) => b.score - a.score);
+    const bestMatches = scoredCharacters.filter(c => c.score > 0);
+    return bestMatches.length > 0 ? bestMatches.slice(0, 2) : [demonSlayerCharacters.find(c => c.name === "竈門炭治郎")];
+}
 </script>

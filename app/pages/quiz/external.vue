@@ -43,7 +43,7 @@
                 <button id="prev-btn" @click="backToQ1()" type="button"
                     class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg transition duration-300"
                     style="display: inline-block;">上一頁</button>
-                <button id="next-btn" @click="setQuizData()" type="button"
+                <button id="next-btn" @click="setQuizData2()" type="button"
                     class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">查看結果</button>
             </div>
         </form>
@@ -116,16 +116,12 @@ onMounted(() => {
 })
 
 async function backToQ1() {
-    // reloadNuxtApp({ path: '/quiz/internal', force: true })
-    // await navigateTo({
-    //     name: 'quiz-internal'
-    // })
     router.push({
         name: 'quiz-internal'
     })
 }
 
-function setQuizData() {
+function setQuizData2() {
     const emptyIndex: number = Array.from(shuffledArray.value).findIndex((q: any) => {
         return !q.value && Number(q.value) !== 0
     })
@@ -138,7 +134,7 @@ function setQuizData() {
         })
         return
     }
-    // discStore.setQuizData1(shuffledArray.value)
+    discStore.setQuizData2(shuffledArray.value)
 }
 
 function shuffleArray(array: Array<any>) {
