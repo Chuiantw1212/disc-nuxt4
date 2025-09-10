@@ -1,0 +1,293 @@
+<template>
+    <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
+        <h4 class="text-2xl font-bold text-gray-800 mb-4 text-center">{{ title }}</h4>
+
+        <div class="nature__body">
+            <!-- Radar Chart -->
+            <div class="nature__body__chart">
+                <canvas ref="canvasEl" class="block box-border h-full w-full"></canvas>
+            </div>
+
+            <!-- Score Squares -->
+            <div class="analysis__traitSquares">
+                <div class="trait__square">
+                    <h5 class="text-base font-bold text-gray-800">支配型 (D)</h5>
+                    <p class="square__value" :style="{ color: colors.D }">{{ scores.D }}</p>
+                </div>
+                <div class="trait__square">
+                    <h5 class="text-base font-bold text-gray-800">影響型 (i)</h5>
+                    <p class="square__value" :style="{ color: colors.I }">{{ scores.I }}</p>
+                </div>
+                <div class="trait__square primary">
+                    <h5 class="text-base font-bold text-gray-800">謹慎型 (C)</h5>
+                    <p class="square__value" :style="{ color: colors.C }">{{ scores.C }}</p>
+                </div>
+                <div class="trait__square">
+                    <h5 class="text-base font-bold text-gray-800">穩健型 (S)</h5>
+                    <p class="square__value" :style="{ color: colors.S }">{{ scores.S }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Primary style summary -->
+        <div class="text-center p-4 bg-gray-50 rounded-md">
+            <p class="text-lg font-semibold">
+                主要風格：
+                <span :style="{ color: primaryStyle.color }">{{ primaryStyle.label }}</span>
+            </p>
+            <p class="text-gray-600 mt-2">{{ primaryStyle.description }}</p>
+        </div>
+
+        <!-- Core Traits (slot or default) -->
+        <div class="space-y-4 text-left mt-6">
+            <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 ({{ coreTitle }})</h5>
+            <slot name="core">
+                <!-- 預設內容（可被 slot 覆蓋） -->
+                <div class="trait__feature">
+                    <h5 class="font-bold text-gray-700">描述：</h5>
+                    <p class="text-gray-600 mt-1">在日常生活中，您是一位標準的「細節控」。您享受把事情做得精確、有條理。</p>
+                </div>
+                <div class="trait__feature">
+                    <h5 class="font-bold text-gray-700">運用優勢：</h5>
+                    <p class="text-gray-600 mt-1">您的謹慎與細心，讓您在處理生活大小事時總能井井有條，避免麻煩。</p>
+                </div>
+                <div class="trait__feature">
+                    <h5 class="font-bold text-gray-700">過度使用：</h5>
+                    <p class="text-gray-600 mt-1">有時可能會因為過於專注細節，而顯得有些猶豫不決或僵化。</p>
+                </div>
+                <div class="trait__feature">
+                    <h5 class="font-bold text-gray-700">陰影：</h5>
+                    <p class="text-gray-600 mt-1">您內心可能害怕犯錯或事情不完美。這種追求完美的傾向，是您細心背後的驅動力。</p>
+                </div>
+                <div class="trait__feature">
+                    <h5 class="font-bold text-gray-700">小建議：</h5>
+                    <p class="text-gray-600 mt-1">試著給自己一些「犯小錯」的空間。有時候，完成比完美更重要。</p>
+                </div>
+            </slot>
+        </div>
+
+        <!-- Low Traits (slot or default) -->
+        <div class="lowTraits">
+            <h5 class="font-bold text-lg text-gray-700 text-center mb-2">潛在的限制與挑戰 (低分特質)</h5>
+            <slot name="limits">
+                <div class="trait__feature">
+                    <h5 class="font-bold text-gray-700">i 低（缺乏影響性）</h5>
+                    <p class="text-gray-600 mt-1">話不多，社交主動性低，容易被認為冷冷的。</p>
+                </div>
+            </slot>
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+// 若你已在 plugins/chart.client.ts 裡 Chart.register(...registerables)，用下行即可：
+import { Chart, type ChartData, type ChartOptions } from 'chart.js'
+// 若沒有註冊，改用： import Chart from 'chart.js/auto'
+
+type Scores = { D: number; I: number; C: number; S: number }
+type ColorMap = { D: string; I: string; C: string; S: string }
+
+const props = withDefaults(defineProps<{
+    title?: string
+    coreTitle?: string
+    scores: Scores
+    colors?: ColorMap
+    primaryStyle?: {
+        label: string
+        color: string
+        description: string
+    }
+}>(), {
+    title: '1. 你的真實風格 (核心自我)',
+    coreTitle: '謹慎型 (C)',
+    colors: () => ({
+        D: 'rgb(34,197,94)',   // green-500
+        I: 'rgb(236,72,153)',  // pink-500
+        C: 'rgb(234,179,8)',   // amber-400
+        S: 'rgb(59,130,246)'   // blue-500
+    }),
+    primaryStyle: () => ({
+        label: 'Cd 風格 (謹慎型/支配型)',
+        color: 'rgb(234,179,8)',
+        description: '您是「權威的專家」。擁有 C 的分析能力與 D 的主導性，是追求標準與真相的權威。'
+    })
+})
+
+const canvasEl = ref<HTMLCanvasElement | null>(null)
+let chart: Chart | null = null
+
+const buildData = (): ChartData<'radar'> => {
+    const { D, I, C, S } = props.scores
+    return {
+        labels: ['D', 'I', 'C', 'S'],
+        datasets: [
+            {
+                label: 'Natural',
+                data: [D, I, C, S],
+                // 背景/邊框色用主要色（C）的半透明系
+                backgroundColor: 'rgba(234, 179, 8, 0.15)',
+                borderColor: props.colors.C,
+                pointBackgroundColor: props.colors.C
+            }
+        ]
+    }
+}
+
+const options: ChartOptions<'radar'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: { display: false },
+        tooltip: { enabled: true },
+        // 你若有自製 plugin（ex: watermark），可在此加上：
+        // watermark: { text: '海德堡隱士居', opacity: 0.06 }
+    },
+    scales: {
+        r: {
+            beginAtZero: true,
+            suggestedMax: 40,         // 視你的量表可調
+            angleLines: { color: '#e5e7eb' },
+            grid: { color: '#e5e7eb' },
+            pointLabels: { color: '#374151', font: { size: 12 } },
+            ticks: { display: false }
+        }
+    }
+}
+
+onMounted(() => {
+    if (!canvasEl.value) return
+    chart = new Chart(canvasEl.value, {
+        type: 'radar',
+        data: {
+            labels: ['D', 'I', 'S', 'C'],
+            datasets: [{
+                label: '分數',
+                data: [props.scores.D, props.scores.I, props.scores.S, props.scores.C],
+                backgroundColor: `rgba(20, 184, 166, 0.2)`,
+                borderColor: `rgba(13, 148, 136, 1)`,
+                pointBackgroundColor: `rgba(13, 148, 136, 1)`,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(13, 148, 136)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 36,
+                    ticks: {
+                        stepSize: 9
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        }
+                    },
+                    startAngle: -45
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    })
+})
+
+onBeforeUnmount(() => {
+    chart?.destroy()
+    chart = null
+})
+
+watch(() => props.scores, (next) => {
+    if (!chart) return
+    chart.data = buildData()
+    chart.update()
+}, { deep: true })
+</script>
+
+<style lang="scss" scoped>
+.nature__body {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    .nature__body__chart {
+        width: 100%;
+    }
+
+    .analysis__traitSquares {
+        width: 100%;
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 1rem;
+
+        .trait__square {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            text-align: center;
+            height: 100%;
+
+            .square__value {
+                font-weight: 700;
+                font-size: 2.25rem;
+                line-height: 2.5rem;
+                margin-top: 0.25rem;
+                margin-bottom: 0.25rem;
+            }
+        }
+    }
+}
+
+
+.trait__feature {
+    padding: 1rem;
+    background-color: rgb(249 250 251 / 0.5);
+    border-width: 1px;
+    border-radius: 0.375rem;
+    box-sizing: border-box;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #e5e7eb;
+}
+
+.lowTraits {
+    margin-top: 1.5rem;
+}
+
+@media screen and (min-width:992px) {
+    .nature__body {
+        display: flex;
+
+        // display: grid;
+        // grid-template-columns: repeat(2, minmax(0, 1fr));
+        .nature__body__chart {
+            width: 50%;
+        }
+
+        .analysis__traitSquares {
+            width: 50%;
+
+            .trait__square {
+
+                .square__value {
+                    font-size: 48px;
+                }
+            }
+        }
+    }
+
+}
+</style>
