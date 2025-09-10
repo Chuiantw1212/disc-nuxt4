@@ -1,11 +1,17 @@
 <template>
-    <div id="result-screen" class="screen bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+    <div id="result-screen" class="screen bg-white p-6 sm:p-8 rounded-xl shadow-lg active-screen">
         <div class="text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-gray-800"><span id="result-name"></span>的測驗結果</h2>
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-gray-800"><span id="result-name">EN Chu</span>的測驗結果</h2>
             <p class="text-gray-600 mb-8">以下是您在「真實風格」與「外顯模樣」兩種情境下的 DiSC 特質分析。</p>
         </div>
 
-        <div id="summary-analysis-container" class="mb-8"></div>
+        <div id="summary-analysis-container" class="mb-8">
+            <div class="bg-teal-50 p-6 rounded-lg border border-teal-200 space-y-4 text-gray-700">
+                <h3 class="text-2xl font-bold text-center mb-4 text-gray-700">總結分析：真實風格 vs. 外顯模樣</h3>
+                <p>您是一位 <strong>「表裡如一」</strong> 的人。您的真實風格與外顯模樣高度一致，主要都展現出 <strong>謹慎型 (C)</strong> 的特質。</p>
+                <p class="mt-2">這代表您在公開場合中，能夠自在地做自己，不需要耗費太多心力去「扮演」另一個角色。這種真實性與一致性，是您建立信任感與個人魅力的重要基礎。</p>
+            </div>
+        </div>
 
         <div class="my-8 text-center text-gray-500 text-sm p-4 bg-gray-50 rounded-lg">
             <p>此測驗是用vibe coding完成的陽春版，目前忘形還沒學會分享，所以歡迎你截圖分享XD</p>
@@ -13,10 +19,176 @@
 
         <div id="detailed-analysis-container">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-700 border-t pt-10">兩大風格下的你</h3>
-            <div id="detailed-analysis" class="space-y-12 mt-6"></div>
+            <div id="detailed-analysis" class="space-y-12 mt-6">
+                <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
+                    <h4 class="text-2xl font-bold text-gray-800 mb-4 text-center">1. 你的真實風格 (核心自我)</h4>
+                    <div class="nature__body">
+                        <div class="h-64 sm:h-80"><canvas id="chart-natural"
+                                style="display: block; box-sizing: border-box; height: 320px; width: 347px;"
+                                height="640" width="694"></canvas></div>
+                        <div class="analysis__traitSquares">
+                            <div class="trait__square ">
+                                <h5 class="text-base font-bold text-gray-800">支配型 (D)</h5>
+                                <p class="square__value" style="color: rgb(34, 197, 94);">24</p>
+                            </div>
+                            <div class="trait__square ">
+                                <h5 class="text-base font-bold text-gray-800">影響型 (i)</h5>
+                                <p class="square__value" style="color: rgb(236, 72, 153);">9</p>
+                            </div>
+                            <div class="trait__square primary">
+                                <h5 class="text-base font-bold text-gray-800">謹慎型 (C)</h5>
+                                <p class="square__value" style="color: rgb(234, 179, 8);">30</p>
+                            </div>
+                            <div class="trait__square ">
+                                <h5 class="text-base font-bold text-gray-800">穩健型 (S)</h5>
+                                <p class="square__value" style="color: rgb(59, 130, 246);">15</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-md">
+                        <p class="text-lg font-semibold">主要風格：<span style="color: rgb(234, 179, 8);">Cd 風格
+                                (謹慎型/支配型)</span></p>
+                        <p class="text-gray-600 mt-2">您是「權威的專家」。擁有 C 的分析能力與 D 的主導性，是追求標準與真相的權威。</p>
+                    </div>
+                    <div class="space-y-4 text-left mt-6">
+                        <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 (謹慎型 (C))</h5>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">描述：</h5>
+                            <p class="text-gray-600 mt-1">在日常生活中，您是一位標準的「細節控」。您享受把事情做得精確、有條理。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">運用優勢：</h5>
+                            <p class="text-gray-600 mt-1">您的謹慎與細心，讓您在處理生活大小事時總能井井有條，避免麻煩。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">過度使用：</h5>
+                            <p class="text-gray-600 mt-1">有時可能會因為過於專注細節，而顯得有些猶豫不決或僵化。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">陰影：</h5>
+                            <p class="text-gray-600 mt-1">您內心可能害怕犯錯或事情不完美。這種追求完美的傾向，是您細心背後的驅動力。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">小建議：</h5>
+                            <p class="text-gray-600 mt-1">試著給自己一些「犯小錯」的空間。有時候，完成比完美更重要。</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4 text-left mt-8 pt-6 border-t">
+                        <h5 class="font-bold text-lg text-gray-700 text-center mb-2">潛在的限制與挑戰 (低分特質)</h5>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">i 低（缺乏影響性）</h5>
+                            <p class="text-gray-600 mt-1">話不多，社交主動性低，容易被認為冷冷的。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
+                    <h4 class="text-2xl font-bold text-gray-800 mb-4 text-center">2. 你的外顯模樣 (公開形象)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center my-6">
+                        <div class="h-64 sm:h-80"><canvas id="chart-work"
+                                style="display: block; box-sizing: border-box; height: 320px; width: 347px;"
+                                height="640" width="694"></canvas></div>
+                        <div class="grid grid-cols-2 gap-4 h-64 sm:h-80">
+                            <div class="trait__square ">
+                                <h5 class="text-base font-bold text-gray-800">支配型 (D)</h5>
+                                <p class="text-4xl sm:text-5xl font-bold my-1" style="color: rgb(34, 197, 94);">24</p>
+                            </div>
+                            <div class="trait__square ">
+                                <h5 class="text-base font-bold text-gray-800">影響型 (i)</h5>
+                                <p class="text-4xl sm:text-5xl font-bold my-1" style="color: rgb(236, 72, 153);">12</p>
+                            </div>
+                            <div class="trait__square primary">
+                                <h5 class="text-base font-bold text-gray-800">謹慎型 (C)</h5>
+                                <p class="text-4xl sm:text-5xl font-bold my-1" style="color: rgb(234, 179, 8);">36</p>
+                            </div>
+                            <div class="trait__square ">
+                                <h5 class="text-base font-bold text-gray-800">穩健型 (S)</h5>
+                                <p class="text-4xl sm:text-5xl font-bold my-1" style="color: rgb(59, 130, 246);">11</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-md">
+                        <p class="text-lg font-semibold">主要風格：<span style="color: rgb(234, 179, 8);">謹慎型 (C)</span></p>
+                    </div>
+                    <div class="space-y-4 text-left mt-6">
+                        <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 (謹慎型 (C))</h5>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">描述：</h5>
+                            <p class="text-gray-600 mt-1">您是團隊的品質守門員。您注重細節、有條理且追求準確性。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">運用優勢：</h5>
+                            <p class="text-gray-600 mt-1">將您的嚴謹用於品質控管、流程優化和風險評估，是不可或缺的角色。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">過度使用：</h5>
+                            <p class="text-gray-600 mt-1">可能陷入「分析癱瘓」，過度專注於細節而延誤進度，或對他人吹毛求疵。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">陰影：</h5>
+                            <p class="text-gray-600 mt-1">陰影層面是害怕犯錯或受到批評，這可能使您過於保守，不願冒險。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">小建議：</h5>
+                            <p class="text-gray-600 mt-1">學會區分「完美」與「足夠好」，設定合理的完成時限，並練習在資訊不完全時做決策。</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4 text-left mt-8 pt-6 border-t">
+                        <h5 class="font-bold text-lg text-gray-700 text-center mb-2">潛在的限制與挑戰 (低分特質)</h5>
+                        <div class="p-4 bg-gray-50/50 rounded-md border">
+                            <h5 class="font-bold text-gray-700">S 低（缺乏穩定性）</h5>
+                            <p class="text-gray-600 mt-1">缺少耐心與持續力，團隊可能覺得不被關心。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="growth-suggestion-container" class="mt-12"></div>
-        <div id="character-match-container" class="mt-12"></div>
+        <div id="growth-suggestion-container" class="mt-12" style="display: block;">
+            <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
+                <h3 class="text-2xl font-bold text-center mb-4 text-gray-700">個人化成長建議</h3>
+                <div class="p-4 bg-blue-50/50 rounded-md border border-blue-200 text-gray-700">
+                    <p>您對品質要求極高(高C)，請記得團隊合作也需要溫度與同理心(低S)，適時給予支持。</p>
+                </div>
+            </div>
+        </div>
+        <div id="character-match-container" class="mt-12">
+            <div class="border-t pt-10">
+                <h3 class="text-2xl font-bold text-center mb-6 text-gray-700">最接近你的鬼滅之刃角色</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm flex flex-col">
+                        <div class="text-center">
+                            <p class="text-gray-500 text-sm">蟲柱繼子</p>
+                            <h4 class="text-2xl font-bold text-gray-800">栗花落香奈乎</h4>
+                        </div>
+                        <div class="text-sm my-4 text-center space-y-1">
+                            <p><strong>外在風格:</strong> <span class="font-bold"
+                                    style="color: rgb(234, 179, 8);">謹慎型</span></p>
+                            <p><strong>內在風格:</strong> <span class="font-bold"
+                                    style="color: rgb(59, 130, 246);">穩健型</span> / <span class="font-bold"
+                                    style="color: rgb(234, 179, 8);">謹慎型</span></p>
+                        </div>
+                        <p class="text-gray-600 text-center flex-grow">
+                            外在表現得極度沉默、被動，只遵循命令，給人一種空洞的感覺。但她的內心，其實是「聽從心的聲音」的渴望與對夥伴的深厚情感，以及為此而進行嚴格修煉的堅韌。是從純粹的服從，蛻變為溫柔守護者的代表。
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm flex flex-col">
+                        <div class="text-center">
+                            <p class="text-gray-500 text-sm">盜帳號駭客 / 純愛畫家</p>
+                            <h4 class="text-2xl font-bold text-gray-800">愈史郎</h4>
+                        </div>
+                        <div class="text-sm my-4 text-center space-y-1">
+                            <p><strong>外在風格:</strong> <span class="font-bold"
+                                    style="color: rgb(234, 179, 8);">謹慎型</span> / <span class="font-bold"
+                                    style="color: rgb(34, 197, 94);">支配型</span></p>
+                            <p><strong>內在風格:</strong> <span class="font-bold"
+                                    style="color: rgb(59, 130, 246);">穩健型</span> / <span class="font-bold"
+                                    style="color: rgb(234, 179, 8);">謹慎型</span></p>
+                        </div>
+                        <p class="text-gray-600 text-center flex-grow">
+                            外在冷漠挑剔，只在守護珠世時展現攻擊性。其內心，是對珠世絕對的忠誠與依賴，並透過極致的專注與細心來體現這份守護。他的溫柔，是深思熟慮且完美主義的。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="mt-10 border-t pt-8">
             <div class="max-w-2xl mx-auto space-y-4">
@@ -45,6 +217,7 @@
     </div>
 </template>
 <script setup lang="ts">
+import { Chart } from 'chart.js'
 const discStore = useDiscStore()
 const props = defineProps<{
     demonSlayerCharacters: ICharacter[]
@@ -235,55 +408,120 @@ function drawCharts(naturalScore: IScore, workScore: IScore) {
         scores: workScore,
         context: 'work'
     }];
-}
 
-function createRadarChart(canvasId, scores) {
-    if (charts[canvasId]) {
-        charts[canvasId].destroy();
-    }
-    const ctx = document.getElementById(canvasId).getContext('2d');
-    charts[canvasId] = new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: ['D', 'i', 'S', 'C'],
-            datasets: [{
-                label: '分數',
-                data: [scores.D, scores.I, scores.S, scores.C],
-                backgroundColor: `rgba(20, 184, 166, 0.2)`,
-                borderColor: `rgba(13, 148, 136, 1)`,
-                pointBackgroundColor: `rgba(13, 148, 136, 1)`,
-                pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgb(13, 148, 136)',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 36,
-                    ticks: {
-                        stepSize: 9
-                    },
-                    pointLabels: {
-                        font: {
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    startAngle: -45
-                }
+    analysisSections.forEach(setting => {
+        const { scores, id } = setting
+        const canvasId = `chart-${id}`;
+        const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement
+        if (!canvasElement) {
+            return
+        }
+        const ctx = canvasElement.getContext('2d');
+        if (!ctx) {
+            return
+        }
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['D', 'i', 'S', 'C'],
+                datasets: [{
+                    label: '分數',
+                    data: [scores.D, scores.I, scores.S, scores.C],
+                    backgroundColor: `rgba(20, 184, 166, 0.2)`,
+                    borderColor: `rgba(13, 148, 136, 1)`,
+                    pointBackgroundColor: `rgba(13, 148, 136, 1)`,
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(13, 148, 136)',
+                    borderWidth: 2
+                }]
             },
-            plugins: {
-                legend: {
-                    display: false
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 36,
+                        ticks: {
+                            stepSize: 9
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        startAngle: -45
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
             }
-        }
-    });
+        });
+    })
+
+    // if (charts[canvasId]) {
+    //     charts[canvasId].destroy();
+    // }
 }
 
+// function createRadarChart(canvasId, scores) {
+//     const ctx = document.getElementById(canvasId).getContext('2d');
+//     charts[canvasId] =
+// }
+
 </script>
+<style lang="scss" scoped>
+.nature__body {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.analysis__traitSquares {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 1rem;
+
+    .trait__square {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+        text-align: center;
+        height: 100%;
+
+        .square__value {
+            font-weight: 700;
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+    }
+}
+
+@media screen and (min-width:992px) {
+    .nature__body {
+        display: flex;
+    }
+
+    .analysis__traitSquares {
+        width: 100%;
+
+        .trait__square {
+
+            .square__value {
+                font-size: 48px;
+            }
+        }
+    }
+}
+</style>
