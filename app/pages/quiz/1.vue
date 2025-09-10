@@ -38,17 +38,6 @@
                     @click="setQuizData()">下一頁</button>
             </div>
         </form>
-        <el-dialog v-model="dialogVisible" title="Tips" width="500" :align-center="true">
-            <span>This is a message</span>
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="dialogVisible = false">Cancel</el-button>
-                    <el-button type="primary" @click="dialogVisible = false">
-                        Confirm
-                    </el-button>
-                </div>
-            </template>
-        </el-dialog>
     </div>
 </template>
 <script setup lang="ts">
@@ -118,9 +107,11 @@ onMounted(() => {
 
 function setQuizData() {
     const hasSomeEmpty: boolean = shuffledArray.value.some((q: any) => !q.value)
-    if (hasSomeEmpty) {
+    const emptyIndex: number = Array.from(shuffledArray.value).findIndex((q: any) => !q.value)
+    if (emptyIndex !== -1) {
+        const emptyQ = shuffledArray.value[emptyIndex]
         ElMessage({
-            message: `請評估`,
+            message: `請評估${emptyQ.text}`,
             type: 'info',
             placement: 'bottom',
         })
