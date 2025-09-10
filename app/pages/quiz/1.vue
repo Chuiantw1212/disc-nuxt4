@@ -113,7 +113,10 @@ onMounted(() => {
 
 function setQuizData() {
     const hasSomeEmpty: boolean = shuffledArray.value.some((q: any) => !q.value)
-    const emptyIndex: number = Array.from(shuffledArray.value).findIndex((q: any) => !q.value)
+    const emptyIndex: number = Array.from(shuffledArray.value).findIndex((q: any) => {
+        return !q.value && Number(q.value) !== 0
+    })
+    console.log(shuffledArray.value)
     if (emptyIndex !== -1) {
         const emptyQ = shuffledArray.value[emptyIndex]
         ElMessage({
