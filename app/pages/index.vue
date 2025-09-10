@@ -40,16 +40,14 @@
     </div>
 </template>
 <script setup lang="ts">
-const router = useRouter()
-
 const form = ref({
     name: '',
     email: ''
 })
 
 function starQuiz() {
-    router.push({
-        name: 'quiz-1'
+    navigateTo({
+        name: 'quiz-internal'
     })
 }
 // Use a static import for server-side compatibility

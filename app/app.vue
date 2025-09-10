@@ -1,8 +1,6 @@
 <template>
   <div>
-    <router-view></router-view>
+    <nuxt-page></nuxt-page>
   </div>
 </template>
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
