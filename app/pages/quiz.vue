@@ -409,3 +409,6 @@ const demonSlayerCharacters = [{
     description: "脾氣暴躁、極度固執，動不動就拿刀追人；但這份暴躁源於對刀劍工藝的極致專注與偏執。"
 }];
 </script>
+<style lang="scss" scoped>
+
+</style>

@@ -1,7 +1,7 @@
 <template>
     <div id="quiz-screen" class="screen bg-white p-6 sm:p-8 rounded-xl shadow-lg active-screen">
         <div id="quiz-header" class="text-center mb-8">
-            <h2 id="quiz-title" class="text-3xl font-bold text-gray-800">Part 1: 你的真實風格</h2>
+            <h2 id="quiz-title" class="quiz__title">Part 1: 你的真實風格</h2>
             <p id="quiz-description" class="text-gray-600 mt-2">
                 想像一個完全放鬆的週末午後，或跟三五好友膩在一起的時候。不需要扮演任何角色，也不用在意他人眼光。此刻的您，是最舒服自在、最接近核心本質的模樣。</p>
             <p id="quiz-instruction" class="text-teal-700 font-medium mt-4">🏠 真我篇：在這種最放鬆的狀態下，請憑直覺，評估以下描述有多符合您「內心真正的自己」。
@@ -148,6 +148,11 @@ function shuffleArray(array: Array<any>) {
 
 </script>
 <style lang="scss" scoped>
+.quiz__title {
+    font-weight: 800;
+    font-size: 30px;
+}
+
 .form__question {
     text-align: center;
     border-bottom: 1px lightgrey solid;
@@ -172,6 +177,33 @@ function shuffleArray(array: Array<any>) {
 
     .option__input {
         visibility: hidden;
+        position: absolute;
+    }
+}
+
+@media screen and (min-width:992px) {
+    .form__question {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .question__text {
+            font-weight: 600;
+            font-size: 18px;
+            padding: 0px;
+        }
+
+        .question__options {
+            gap: 0.75rem;
+
+            .options__label {
+                line-height: 0px;
+            }
+        }
+
+        .option__input {
+            visibility: hidden;
+        }
     }
 }
 </style>

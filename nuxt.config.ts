@@ -5,7 +5,15 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@pinia/nuxt',
-    '@element-plus/nuxt'
+    '@element-plus/nuxt',
+    '@nuxtjs/google-fonts'
   ],
+  googleFonts: {
+    families: {
+      'Noto Sans TC': [300, 400, 500, 600, 700],
+    },
+    display: 'swap',  // prevents invisible text while loading
+    preload: true,    // adds <link rel="preload">
+  },
   css: ['~/assets/main.css', '~/assets/tailwind.css']
 })
