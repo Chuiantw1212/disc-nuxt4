@@ -38,11 +38,7 @@
                     @click="setQuizData()">下一頁</button>
             </div>
         </form>
-        <el-button plain @click="dialogVisible = true">
-            Click to open the Dialog
-        </el-button>
-
-        <el-dialog v-model="dialogVisible" title="Tips" width="500" :before-close="handleClose">
+        <el-dialog v-model="dialogVisible" title="Tips" width="500" :align-center="true">
             <span>This is a message</span>
             <template #footer>
                 <div class="dialog-footer">
@@ -56,10 +52,11 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import type { MessagePlacement, MessageType } from 'element-plus'
 const router = useRouter()
 const discStore = useDiscStore()
-const dialogVisible = ref(false)
+const dialogVisible = ref<boolean>(false)
 const quizData = [{
     text: "在生活中，我還是很講求效率",
     trait: "D"
@@ -119,20 +116,14 @@ onMounted(() => {
     });
 })
 
-function handleClose(done: () => void) {
-    ElMessageBox.confirm('Are you sure to close this dialog?')
-        .then(() => {
-            done()
-        })
-        .catch(() => {
-            // catch error
-        })
-}
-
 function setQuizData() {
     const hasSomeEmpty: boolean = shuffledArray.value.some((q: any) => !q.value)
     if (hasSomeEmpty) {
-        alert('clicked action button!')
+        ElMessage({
+            message: `請評估`,
+            type: 'info',
+            placement: 'bottom',
+        })
         return
     }
     discStore.setQuizData1(shuffledArray.value)
