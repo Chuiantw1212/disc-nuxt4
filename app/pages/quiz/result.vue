@@ -52,7 +52,6 @@ const props = defineProps({
         default: []
     }
 })
-// const totalParts = ref<any[]>([])
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
 interface IQuizOption {
@@ -67,7 +66,7 @@ interface IScore {
     C: number
 }
 onMounted(() => {
-    quizNatural.value = discStore.quizData1
+    // quizNatural.value = discStore.quizData1
     // quizWork.value = discStore.quizData2
     // totalParts.value = [...quizData1, ...quizData2]
     const quizData = [
@@ -88,11 +87,13 @@ onMounted(() => {
         },
     ]
     quizNatural.value = quizData
+    quizWork.value = quizData
     const naturalScore = calculateScore(quizNatural.value)
-    findCharacterMatch(naturalScore)
+    const workScore = calculateScore(quizWork.value)
+    findCharacterMatch(naturalScore, workScore)
 })
 
-function calculateScore(quizData: any[]) {
+function calculateScore(quizData: IQuizOption[]) {
     const score: IScore = {
         D: 0,
         I: 0,
@@ -102,27 +103,36 @@ function calculateScore(quizData: any[]) {
     quizData.forEach((q: IQuizOption) => {
         score[q.trait] += Number(q.value)
     })
-    Object.entries(score).sort(([, a], [, b]) => {
-        console.log({
-            a, b
-        })
-        return b - a
-    });
-    console.log(score)
     return score
 }
 
-function findCharacterMatch(naturalScore: IScore) {
+function sortTraits(score: IScore): [string, number][] {
+    return Object.entries(score).sort(([, a], [, b]) => {
+        return b - a
+    });
+}
+
+function findCharacterMatch(naturalScore: IScore, workScore: IScore) {
     const allScoresNatural = Object.values(naturalScore);
+
+    // // 平均整合者
+    // const maxScoreNatural = Math.max(...allScoresNatural)
+    // const minScoreNatural = Math.min(...allScoresNatural)
+    // if (maxScoreNatural - minScoreNatural <= 7) {
+    //     const murata = props.demonSlayerCharacters.find((c: any) => c.isEasterEgg);
+    //     if (murata)
+    //         return [murata];
+    // }
+
+    const natualTraits = sortTraits(naturalScore) as any
+    const primaryNaturalWeight = natualTraits[0][0]
+    const secondaryNatualWeight = natualTraits[1][0]
+
+    const workTraits = sortTraits(workScore) as any
+    const primaryWorkWeight = workTraits[0][0]
+    const secondaryWorkWeight = workTraits[1][0]
+
     
-    // 平均整合者
-    const maxScoreNatural = Math.max(...allScoresNatural)
-    const minScoreNatural = Math.min(...allScoresNatural)
-    if (maxScoreNatural - minScoreNatural <= 7) {
-        const murata = props.demonSlayerCharacters.find(c => c.isEasterEgg);
-        if (murata)
-            return [murata];
-    }
 }
 
 // function findCharacterMatch(scoresNatural, scoresWork) {
