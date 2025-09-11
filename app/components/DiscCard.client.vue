@@ -33,7 +33,7 @@
         <div class="text-center p-4 bg-gray-50 rounded-md">
             <p class="text-lg font-semibold">
                 主要風格：
-                <span :style="{ color: primaryStyle.color }">{{ primaryStyle.label }}</span>
+                <span :style="{ color: styleColor }">{{ primaryStyle.label }}</span>
             </p>
             <p class="text-gray-600 mt-2">{{ primaryStyle.description }}</p>
         </div>
@@ -86,8 +86,8 @@ import { Chart, type ChartData, type ChartOptions } from 'chart.js'
 // 若沒有註冊，改用： import Chart from 'chart.js/auto'
 
 type Scores = { D: number; I: number; C: number; S: number }
-type ColorMap = { D: string; I: string; C: string; S: string }
-
+type ColorMap = { D: string; I: string; C: string; S: string, [key: string]: string }
+const styleColor = ref<string>('')
 const props = withDefaults(defineProps<{
     title?: string
     coreTitle?: string
@@ -95,7 +95,7 @@ const props = withDefaults(defineProps<{
     colors?: ColorMap
     primaryStyle?: {
         label: string
-        color: string
+        // color: string
         description: string
     }
 }>(), {
@@ -109,10 +109,25 @@ const props = withDefaults(defineProps<{
     }),
     primaryStyle: () => ({
         label: 'Cd 風格 (謹慎型/支配型)',
-        color: 'rgb(234,179,8)',
+        // color: 'rgb(234,179,8)',
         description: '您是「權威的專家」。擁有 C 的分析能力與 D 的主導性，是追求標準與真相的權威。'
     })
 })
+
+onMounted(() => {
+    setStyleColor()
+    drawChart()
+})
+
+function setStyleColor() {
+    const primaryTrait = props.primaryStyle.label[0]
+    if (primaryTrait) {
+        const selectedColor = props.colors[primaryTrait]
+        if (selectedColor) {
+            styleColor.value = selectedColor
+        }
+    }
+}
 
 const canvasEl = ref<HTMLCanvasElement | null>(null)
 let chart: Chart | null = null
@@ -155,7 +170,7 @@ const options: ChartOptions<'radar'> = {
     }
 }
 
-onMounted(() => {
+function drawChart() {
     if (!canvasEl.value) return
     chart = new Chart(canvasEl.value, {
         type: 'radar',
@@ -199,7 +214,7 @@ onMounted(() => {
             }
         }
     })
-})
+}
 
 onBeforeUnmount(() => {
     chart?.destroy()

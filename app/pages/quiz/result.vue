@@ -34,7 +34,7 @@
                 I: 24,
                 C: 24,
                 S: 24,
-            }"></disc-card>
+            }" :primaryStyle="primaryStyle"></disc-card>
             <disc-card :scores="{
                 D: 24,
                 I: 24,
@@ -123,7 +123,8 @@ import { Chart } from 'chart.js'
 const discStore = useDiscStore()
 const props = defineProps<{
     demonSlayerCharacters: ICharacter[],
-    personalizedAdviceContent: any
+    personalizedAdviceContent: any,
+    combinedAnalysisContent: any,
 }>()
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
@@ -131,6 +132,17 @@ const summaryHtml = ref<string>('')
 const isEasterEggCharacter = ref<boolean>(false)
 
 const personalAdvice = ref<string>('')
+
+interface IStyle {
+    label: string
+    color: string
+    description: string
+}
+const primaryStyle = ref<IStyle>({
+    label: "",
+    color: "",
+    description: "",
+})
 
 interface IQuizOption {
     text: string,
@@ -397,6 +409,24 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
 
     analysisSections.forEach(setting => {
         const { scores, id } = setting
+        // featrues
+        const traits = getTraitsSorted(scores) as any
+        const primaryTraitKey = traits[0][0]
+        const primaryScore = traits[0][1]
+        const secondaryTraitKey = traits[1][0]
+        const secondaryScore = traits[1][1]
+
+        // let styleName = 
+        primaryStyle.value.label = traitInfo[primaryTraitKey].name
+        primaryStyle.value.description = ''
+        if (primaryScore - secondaryScore <= 8 && primaryScore > 0 && secondaryScore > 0) {
+            let combinedKey = primaryTraitKey.toLowerCase() === 'i' ? 'i' + secondaryTraitKey : primaryTraitKey + secondaryTraitKey.toLowerCase();
+            primaryStyle.value.label = `${primaryTraitKey}${secondaryTraitKey.toLowerCase()} 風格 (${traitInfo[primaryTraitKey].shortName}/${traitInfo[secondaryTraitKey].shortName})`;
+            if (props.combinedAnalysisContent[combinedKey])
+                primaryStyle.value.description = props.combinedAnalysisContent[combinedKey].description;
+        }
+
+        // draw
         const canvasId = `chart-${id}`;
         const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement
         if (!canvasElement) {
