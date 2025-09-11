@@ -33,11 +33,11 @@
                 S: 24,
             }"></disc-card>
         </div>
-        <div id="growth-suggestion-container" class="mt-12" style="display: block;">
+        <div v-if="personalAdvice" id="growth-suggestion-container" class="mt-12" style="display: block;">
             <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
                 <h3 class="text-2xl font-bold text-center mb-4 text-gray-700">個人化成長建議</h3>
                 <div class="p-4 bg-blue-50/50 rounded-md border border-blue-200 text-gray-700">
-                    <p>您對品質要求極高(高C)，請記得團隊合作也需要溫度與同理心(低S)，適時給予支持。</p>
+                    <p>{{ personalAdvice }}</p>
                 </div>
             </div>
         </div>
@@ -113,11 +113,13 @@ import DiscCard from '~/components/DiscCard.client.vue'
 import { Chart } from 'chart.js'
 const discStore = useDiscStore()
 const props = defineProps<{
-    demonSlayerCharacters: ICharacter[]
+    demonSlayerCharacters: ICharacter[],
+    personalizedAdviceContent: any
 }>()
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
 const summaryHtml = ref<string>('')
+const personalAdvice = ref<string>('')
 
 interface IQuizOption {
     text: string,
@@ -235,8 +237,21 @@ function displayResults(scoresNatural: IScore, scoresWork: IScore) {
     } else {
         // Normal Character
         generateSummaryAnalysis(scoresNatural, scoresWork);
-        // growthContainer.innerHTML = generatePersonalizedAdvice(scoresWork);
-        // growthContainer.style.display = 'block';
+        generatePersonalizedAdvice(scoresWork)
+    }
+}
+
+function generatePersonalizedAdvice(scoresWork: IScore) {
+    const sortedWork = getTraitsSorted(scoresWork) as any
+    const highTrait = sortedWork[0][0]
+    const lowTrait = sortedWork[3][0];
+
+    personalAdvice.value = ''
+    if (sortedWork[0][1] - sortedWork[3][1] >= 10) {
+        const adviceKey = `low${lowTrait.toUpperCase()}`;
+        if (props.personalizedAdviceContent[`high${highTrait}`]?.[adviceKey]) {
+            personalAdvice.value = props.personalizedAdviceContent[`high${highTrait}`][adviceKey];
+        }
     }
 }
 
