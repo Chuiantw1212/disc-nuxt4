@@ -12,6 +12,15 @@
 
                 </div>
             </div>
+            <div v-if="isEasterEggCharacter"
+                class="p-6 bg-yellow-50 border border-yellow-400 rounded-lg text-yellow-800">
+                <h3 class="font-bold text-lg">您的主要風格：整合型 (Integrator)</h3>
+                <p class="mt-2">您是一位極度平衡的「整合者」，在四種風格中都展現出極高的潛力。您能夠根據不同情境，靈活地展現出決斷、熱情、溫和與嚴謹等多重面貌。</p>
+                <p class="mt-4 font-semibold">特別提醒：</p>
+                <p class="mt-1">
+                    通常我們都會有一些些的風格差距，但您的實在太平均了！這可能是您適應力極強的證明，但也可能代表在作答時不夠果決。希望您可以再試著做一次，或是帶入一些更具體的真實情境（例如：跟最要好的朋友、最討厭的主管互動時），也許能發現更鮮明的自己喔！
+                </p>
+            </div>
         </div>
 
         <div class="my-8 text-center text-gray-500 text-sm p-4 bg-gray-50 rounded-lg">
@@ -119,6 +128,8 @@ const props = defineProps<{
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
 const summaryHtml = ref<string>('')
+const isEasterEggCharacter = ref<boolean>(false)
+
 const personalAdvice = ref<string>('')
 
 interface IQuizOption {
@@ -219,21 +230,10 @@ function getTraitsSorted(score: IScore): [string, number][] {
 
 function displayResults(scoresNatural: IScore, scoresWork: IScore) {
     const matchedCharacters = findCharacterMatch(scoresNatural, scoresWork)
-    // if (!matchedCharacters.length) {
-    //     return
-    // }
+    isEasterEggCharacter.value = false
     if (matchedCharacters[0] && matchedCharacters[0].isEasterEgg) {
-        // Easter Egg Character
-        // summaryContainer.innerHTML = `
-        //                 <div class="p-6 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg text-yellow-800">
-        //                     <h3 class="font-bold text-lg">您的主要風格：整合型 (Integrator)</h3>
-        //                     <p class="mt-2">您是一位極度平衡的「整合者」，在四種風格中都展現出極高的潛力。您能夠根據不同情境，靈活地展現出決斷、熱情、溫和與嚴謹等多重面貌。</p>
-        //                     <p class="mt-4 font-semibold">特別提醒：</p>
-        //                     <p class="mt-1">通常我們都會有一些些的風格差距，但您的實在太平均了！這可能是您適應力極強的證明，但也可能代表在作答時不夠果決。希望您可以再試著做一次，或是帶入一些更具體的真實情境（例如：跟最要好的朋友、最討厭的主管互動時），也許能發現更鮮明的自己喔！</p>
-        //                 </div>
-        //             `;
-        // growthContainer.style.display = 'none';
-        // Keep detailed analysis visible for integrator
+        // 平均者
+        isEasterEggCharacter.value = true
     } else {
         // Normal Character
         generateSummaryAnalysis(scoresNatural, scoresWork);
