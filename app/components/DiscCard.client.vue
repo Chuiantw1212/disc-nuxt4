@@ -271,8 +271,6 @@ watch(() => props.scores, (next) => {
     .nature__body {
         display: flex;
 
-        // display: grid;
-        // grid-template-columns: repeat(2, minmax(0, 1fr));
         .nature__body__chart {
             width: 50%;
         }

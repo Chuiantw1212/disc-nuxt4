@@ -161,13 +161,10 @@ onMounted(() => {
     ]
     quizNatural.value = quizData
     quizWork.value = quizData
-    const naturalScore = calculateScore(quizNatural.value)
-    const workScore = calculateScore(quizWork.value)
-    const characters = findCharacterMatch(naturalScore, workScore)
-    console.log({
-        characters
-    })
-    drawCharts(naturalScore, workScore)
+    const scoresNatural = calculateScore(quizNatural.value)
+    const scoresWork = calculateScore(quizWork.value)
+    drawCharts(scoresNatural, scoresWork)
+    displayResults(scoresNatural, scoresWork)
 })
 
 function calculateScore(quizData: IQuizOption[]) {
@@ -189,8 +186,55 @@ function sortTraits(score: IScore): [string, number][] {
     });
 }
 
-function findCharacterMatch(naturalScore: IScore, workScore: IScore) {
-    const allScoresNatural = Object.values(naturalScore);
+function displayResults(scoresNatural: IScore, scoresWork: IScore) {
+    const matchedCharacters = findCharacterMatch(scoresNatural, scoresWork)
+    if (!matchedCharacters.length) {
+        // summaryContainer.innerHTML = generateSummaryAnalysis(scoresNatural, scoresWork);
+        // growthContainer.innerHTML = generatePersonalizedAdvice(scoresWork);
+        // growthContainer.style.display = 'block';
+        return
+    }
+    if (matchedCharacters[0] && matchedCharacters[0].isEasterEgg) {
+        // summaryContainer.innerHTML = `
+        //                 <div class="p-6 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg text-yellow-800">
+        //                     <h3 class="font-bold text-lg">您的主要風格：整合型 (Integrator)</h3>
+        //                     <p class="mt-2">您是一位極度平衡的「整合者」，在四種風格中都展現出極高的潛力。您能夠根據不同情境，靈活地展現出決斷、熱情、溫和與嚴謹等多重面貌。</p>
+        //                     <p class="mt-4 font-semibold">特別提醒：</p>
+        //                     <p class="mt-1">通常我們都會有一些些的風格差距，但您的實在太平均了！這可能是您適應力極強的證明，但也可能代表在作答時不夠果決。希望您可以再試著做一次，或是帶入一些更具體的真實情境（例如：跟最要好的朋友、最討厭的主管互動時），也許能發現更鮮明的自己喔！</p>
+        //                 </div>
+        //             `;
+        // growthContainer.style.display = 'none';
+        // Keep detailed analysis visible for integrator
+    }
+}
+
+function generateSummaryAnalysis(scoresNatural, scoresWork) {
+    const sortedNatural = getTraitsSorted(scoresNatural);
+    const sortedWork = getTraitsSorted(scoresWork);
+    if (!sortedNatural.length || !sortedWork.length)
+        return '';
+    const primaryNatural = sortedNatural[0][0]
+        , primaryWork = sortedWork[0][0];
+    let summaryHtml = '';
+    const opposites = {
+        'D': 'S',
+        'S': 'D',
+        'I': 'C',
+        'C': 'I'
+    };
+    if (primaryNatural === primaryWork) {
+        summaryHtml = `<p>您是一位 <strong>「表裡如一」</strong> 的人。您的真實風格與外顯模樣高度一致，主要都展現出 <strong>${traitInfo[primaryNatural].name}</strong> 的特質。</p><p class="mt-2">這代表您在公開場合中，能夠自在地做自己，不需要耗費太多心力去「扮演」另一個角色。這種真實性與一致性，是您建立信任感與個人魅力的重要基礎。</p>`;
+    } else {
+        summaryHtml = `<p>您是一位 <strong>「情境適應者」</strong>。您的真實風格是 <strong>${traitInfo[primaryNatural].name}</strong>，但在公開或專業場合，您會調整為 <strong>${traitInfo[primaryWork].name}</strong> 的模樣來應對環境需求。</p><p class="mt-2">這展現了您出色的彈性與適應力，但也暗示著在切換角色的過程中，可能會消耗您額外的精力。了解這兩種風格的差異，有助於您更好地管理自己的能量。</p>`;
+        if (opposites[primaryNatural] === primaryWork) {
+            summaryHtml += `<div class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800"><strong>特別提醒：</strong> 您的風格轉變跨度極大，從 ${traitInfo[primaryNatural].shortName} 到對立的 ${traitInfo[primaryWork].shortName}。這表示您為了適應環境付出了巨大的努力，請務必在工作之餘，給予真實的自己足夠的休息與充電時間。</div>`;
+        }
+    }
+    return `<div class="bg-teal-50 p-6 rounded-lg border border-teal-200 space-y-4 text-gray-700"><h3 class="text-2xl font-bold text-center mb-4 text-gray-700">總結分析：真實風格 vs. 外顯模樣</h3>${summaryHtml}</div>`;
+}
+
+function findCharacterMatch(scoresNatural: IScore, scoresWork: IScore): ICharacter[] {
+    const allScoresNatural = Object.values(scoresNatural);
 
     // // 平均整合者
     // const maxScoreNatural = Math.max(...allScoresNatural)
@@ -201,11 +245,11 @@ function findCharacterMatch(naturalScore: IScore, workScore: IScore) {
     //         return [murata];
     // }
 
-    const natualTraits = sortTraits(naturalScore) as any
+    const natualTraits = sortTraits(scoresNatural) as any
     const primaryNatural = natualTraits[0][0]
     const secondaryNatural = natualTraits[1][0]
 
-    const workTraits = sortTraits(workScore) as any
+    const workTraits = sortTraits(scoresWork) as any
     const primaryWork = workTraits[0][0]
     const secondaryWork = workTraits[1][0]
 
@@ -228,12 +272,12 @@ function findCharacterMatch(naturalScore: IScore, workScore: IScore) {
     remainingCharacters = remainingCharacters.filter((c: ICharacter) => {
         if (c.lowTrait) {
             if (c.name === "鬼舞辻無慘") {
-                if (workScore['S'] <= 10 || naturalScore['S'] <= 10) {
+                if (scoresWork['S'] <= 10 || scoresNatural['S'] <= 10) {
                     return false
                 }
-            } else if (c.lowTraitContext === 'outer' && workScore[c.lowTrait] >= 12) {
+            } else if (c.lowTraitContext === 'outer' && scoresWork[c.lowTrait] >= 12) {
                 return false
-            } else if (c.lowTraitContext === 'inner' && naturalScore[c.lowTrait] >= 12) {
+            } else if (c.lowTraitContext === 'inner' && scoresNatural[c.lowTrait] >= 12) {
                 return false
             }
         }
@@ -284,20 +328,21 @@ function findCharacterMatch(naturalScore: IScore, workScore: IScore) {
     if (candidateCharacters.length) {
         return candidateCharacters.slice(0, 2)
     } else {
-        return props.demonSlayerCharacters.find(c => c.name === "竈門炭治郎")
+        const character = props.demonSlayerCharacters.find(c => c.name === "竈門炭治郎")
+        return character ? [character] : []
     }
 }
 
-function drawCharts(naturalScore: IScore, workScore: IScore) {
+function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
     const analysisSections = [{
         id: 'natural',
         title: "1. 你的真實風格 (核心自我)",
-        scores: naturalScore,
+        scores: scoresNatural,
         context: 'natural'
     }, {
         id: 'work',
         title: "2. 你的外顯模樣 (公開形象)",
-        scores: workScore,
+        scores: scoresWork,
         context: 'work'
     }];
 
@@ -355,17 +400,7 @@ function drawCharts(naturalScore: IScore, workScore: IScore) {
             }
         });
     })
-
-    // if (charts[canvasId]) {
-    //     charts[canvasId].destroy();
-    // }
 }
-
-// function createRadarChart(canvasId, scores) {
-//     const ctx = document.getElementById(canvasId).getContext('2d');
-//     charts[canvasId] =
-// }
-
 </script>
 <style lang="scss" scoped>
 .nature__body {
