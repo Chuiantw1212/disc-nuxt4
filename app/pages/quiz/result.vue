@@ -8,8 +8,9 @@
         <div id="summary-analysis-container" class="mb-8">
             <div class="bg-teal-50 p-6 rounded-lg border border-teal-200 space-y-4 text-gray-700">
                 <h3 class="text-2xl font-bold text-center mb-4 text-gray-700">總結分析：真實風格 vs. 外顯模樣</h3>
-                <p>您是一位 <strong>「表裡如一」</strong> 的人。您的真實風格與外顯模樣高度一致，主要都展現出 <strong>謹慎型 (C)</strong> 的特質。</p>
-                <p class="mt-2">這代表您在公開場合中，能夠自在地做自己，不需要耗費太多心力去「扮演」另一個角色。這種真實性與一致性，是您建立信任感與個人魅力的重要基礎。</p>
+                <div v-html="summaryHtml">
+
+                </div>
             </div>
         </div>
 
@@ -116,6 +117,8 @@ const props = defineProps<{
 }>()
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
+const summaryHtml = ref<string>('')
+
 interface IQuizOption {
     text: string,
     trait: 'D' | 'I' | 'S' | 'C',
@@ -138,6 +141,32 @@ interface ICharacter {
     lowTraitContext: string,
     isEasterEgg: boolean,
 }
+
+const traitInfo: {
+    [key: string]: any
+} = {
+    D: {
+        name: "支配型 (D)",
+        shortName: "支配型",
+        rgb: "34, 197, 94"
+    },
+    I: {
+        name: "影響型 (i)",
+        shortName: "影響型",
+        rgb: "236, 72, 153"
+    },
+    S: {
+        name: "穩健型 (S)",
+        shortName: "穩健型",
+        rgb: "59, 130, 246"
+    },
+    C: {
+        name: "謹慎型 (C)",
+        shortName: "謹慎型",
+        rgb: "234, 179, 8"
+    }
+};
+
 onMounted(() => {
     // quizNatural.value = discStore.quizData1
     // quizWork.value = discStore.quizData2
@@ -180,7 +209,7 @@ function calculateScore(quizData: IQuizOption[]) {
     return score
 }
 
-function sortTraits(score: IScore): [string, number][] {
+function getTraitsSorted(score: IScore): [string, number][] {
     return Object.entries(score).sort(([, a], [, b]) => {
         return b - a
     });
@@ -188,13 +217,11 @@ function sortTraits(score: IScore): [string, number][] {
 
 function displayResults(scoresNatural: IScore, scoresWork: IScore) {
     const matchedCharacters = findCharacterMatch(scoresNatural, scoresWork)
-    if (!matchedCharacters.length) {
-        // summaryContainer.innerHTML = generateSummaryAnalysis(scoresNatural, scoresWork);
-        // growthContainer.innerHTML = generatePersonalizedAdvice(scoresWork);
-        // growthContainer.style.display = 'block';
-        return
-    }
+    // if (!matchedCharacters.length) {
+    //     return
+    // }
     if (matchedCharacters[0] && matchedCharacters[0].isEasterEgg) {
+        // Easter Egg Character
         // summaryContainer.innerHTML = `
         //                 <div class="p-6 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg text-yellow-800">
         //                     <h3 class="font-bold text-lg">您的主要風格：整合型 (Integrator)</h3>
@@ -205,32 +232,39 @@ function displayResults(scoresNatural: IScore, scoresWork: IScore) {
         //             `;
         // growthContainer.style.display = 'none';
         // Keep detailed analysis visible for integrator
+    } else {
+        // Normal Character
+        generateSummaryAnalysis(scoresNatural, scoresWork);
+        // growthContainer.innerHTML = generatePersonalizedAdvice(scoresWork);
+        // growthContainer.style.display = 'block';
     }
 }
 
-function generateSummaryAnalysis(scoresNatural, scoresWork) {
-    const sortedNatural = getTraitsSorted(scoresNatural);
-    const sortedWork = getTraitsSorted(scoresWork);
-    if (!sortedNatural.length || !sortedWork.length)
-        return '';
-    const primaryNatural = sortedNatural[0][0]
-        , primaryWork = sortedWork[0][0];
-    let summaryHtml = '';
-    const opposites = {
+function generateSummaryAnalysis(scoresNatural: IScore, scoresWork: IScore) {
+    const natualTraits = getTraitsSorted(scoresNatural) as any
+    const primaryNatural = natualTraits[0][0]
+    const workTraits = getTraitsSorted(scoresWork) as any
+    const primaryWork = workTraits[0][0]
+
+    const opposites: {
+        [key: string]: any
+    } = {
         'D': 'S',
         'S': 'D',
         'I': 'C',
         'C': 'I'
     };
+
+    // 組合內文
+    summaryHtml.value = ''
     if (primaryNatural === primaryWork) {
-        summaryHtml = `<p>您是一位 <strong>「表裡如一」</strong> 的人。您的真實風格與外顯模樣高度一致，主要都展現出 <strong>${traitInfo[primaryNatural].name}</strong> 的特質。</p><p class="mt-2">這代表您在公開場合中，能夠自在地做自己，不需要耗費太多心力去「扮演」另一個角色。這種真實性與一致性，是您建立信任感與個人魅力的重要基礎。</p>`;
+        summaryHtml.value = `<p>您是一位 <strong>「表裡如一」</strong> 的人。您的真實風格與外顯模樣高度一致，主要都展現出 <strong>${traitInfo[primaryNatural].name}</strong> 的特質。</p><p class="mt-2">這代表您在公開場合中，能夠自在地做自己，不需要耗費太多心力去「扮演」另一個角色。這種真實性與一致性，是您建立信任感與個人魅力的重要基礎。</p>`;
     } else {
-        summaryHtml = `<p>您是一位 <strong>「情境適應者」</strong>。您的真實風格是 <strong>${traitInfo[primaryNatural].name}</strong>，但在公開或專業場合，您會調整為 <strong>${traitInfo[primaryWork].name}</strong> 的模樣來應對環境需求。</p><p class="mt-2">這展現了您出色的彈性與適應力，但也暗示著在切換角色的過程中，可能會消耗您額外的精力。了解這兩種風格的差異，有助於您更好地管理自己的能量。</p>`;
+        summaryHtml.value = `<p>您是一位 <strong>「情境適應者」</strong>。您的真實風格是 <strong>${traitInfo[primaryNatural].name}</strong>，但在公開或專業場合，您會調整為 <strong>${traitInfo[primaryWork].name}</strong> 的模樣來應對環境需求。</p><p class="mt-2">這展現了您出色的彈性與適應力，但也暗示著在切換角色的過程中，可能會消耗您額外的精力。了解這兩種風格的差異，有助於您更好地管理自己的能量。</p>`;
         if (opposites[primaryNatural] === primaryWork) {
-            summaryHtml += `<div class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800"><strong>特別提醒：</strong> 您的風格轉變跨度極大，從 ${traitInfo[primaryNatural].shortName} 到對立的 ${traitInfo[primaryWork].shortName}。這表示您為了適應環境付出了巨大的努力，請務必在工作之餘，給予真實的自己足夠的休息與充電時間。</div>`;
+            summaryHtml.value += `<div class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800"><strong>特別提醒：</strong> 您的風格轉變跨度極大，從 ${traitInfo[primaryNatural].shortName} 到對立的 ${traitInfo[primaryWork].shortName}。這表示您為了適應環境付出了巨大的努力，請務必在工作之餘，給予真實的自己足夠的休息與充電時間。</div>`;
         }
     }
-    return `<div class="bg-teal-50 p-6 rounded-lg border border-teal-200 space-y-4 text-gray-700"><h3 class="text-2xl font-bold text-center mb-4 text-gray-700">總結分析：真實風格 vs. 外顯模樣</h3>${summaryHtml}</div>`;
 }
 
 function findCharacterMatch(scoresNatural: IScore, scoresWork: IScore): ICharacter[] {
@@ -245,11 +279,11 @@ function findCharacterMatch(scoresNatural: IScore, scoresWork: IScore): ICharact
     //         return [murata];
     // }
 
-    const natualTraits = sortTraits(scoresNatural) as any
+    const natualTraits = getTraitsSorted(scoresNatural) as any
     const primaryNatural = natualTraits[0][0]
     const secondaryNatural = natualTraits[1][0]
 
-    const workTraits = sortTraits(scoresWork) as any
+    const workTraits = getTraitsSorted(scoresWork) as any
     const primaryWork = workTraits[0][0]
     const secondaryWork = workTraits[1][0]
 
