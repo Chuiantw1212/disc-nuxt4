@@ -125,6 +125,7 @@ const props = defineProps<{
     demonSlayerCharacters: ICharacter[],
     personalizedAdviceContent: any,
     combinedAnalysisContent: any,
+    analysisContent: any,
 }>()
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
@@ -193,9 +194,6 @@ const traitInfo: {
 };
 
 onMounted(() => {
-    // quizNatural.value = discStore.quizData1
-    // quizWork.value = discStore.quizData2
-    // totalParts.value = [...quizData1, ...quizData2]
     const quizData = [
         {
             text: "在生活中，我還是很講求效率",
@@ -408,7 +406,7 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
     }];
 
     analysisSections.forEach(setting => {
-        const { scores, id } = setting
+        const { scores, id, context } = setting
         // featrues
         const traits = getTraitsSorted(scores) as any
         const primaryTraitKey = traits[0][0]
@@ -416,7 +414,7 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
         const secondaryTraitKey = traits[1][0]
         const secondaryScore = traits[1][1]
 
-        // let styleName = 
+        // 主要風格
         primaryStyle.value.label = traitInfo[primaryTraitKey].name
         primaryStyle.value.description = ''
         if (primaryScore - secondaryScore <= 8 && primaryScore > 0 && secondaryScore > 0) {
@@ -426,7 +424,11 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
                 primaryStyle.value.description = props.combinedAnalysisContent[combinedKey].description;
         }
 
-        // draw
+        // 核心特質解析
+        const traitAnalysis = props.analysisContent[primaryTraitKey]
+        const traitGroup = traitAnalysis[context]
+
+        // 圖表
         const canvasId = `chart-${id}`;
         const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement
         if (!canvasElement) {

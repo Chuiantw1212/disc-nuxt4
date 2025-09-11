@@ -41,36 +41,33 @@
         <!-- Core Traits (slot or default) -->
         <div class="space-y-4 text-left mt-6">
             <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 ({{ coreTitle }})</h5>
-            <slot name="core">
-                <!-- 預設內容（可被 slot 覆蓋） -->
-                <div class="trait__feature">
-                    <h5 class="font-bold text-gray-700">描述：</h5>
-                    <p class="text-gray-600 mt-1">在日常生活中，您是一位標準的「細節控」。您享受把事情做得精確、有條理。</p>
-                </div>
-                <div class="trait__feature">
-                    <h5 class="font-bold text-gray-700">運用優勢：</h5>
-                    <p class="text-gray-600 mt-1">您的謹慎與細心，讓您在處理生活大小事時總能井井有條，避免麻煩。</p>
-                </div>
-                <div class="trait__feature">
-                    <h5 class="font-bold text-gray-700">過度使用：</h5>
-                    <p class="text-gray-600 mt-1">有時可能會因為過於專注細節，而顯得有些猶豫不決或僵化。</p>
-                </div>
-                <div class="trait__feature">
-                    <h5 class="font-bold text-gray-700">陰影：</h5>
-                    <p class="text-gray-600 mt-1">您內心可能害怕犯錯或事情不完美。這種追求完美的傾向，是您細心背後的驅動力。</p>
-                </div>
-                <div class="trait__feature">
-                    <h5 class="font-bold text-gray-700">小建議：</h5>
-                    <p class="text-gray-600 mt-1">試著給自己一些「犯小錯」的空間。有時候，完成比完美更重要。</p>
-                </div>
-            </slot>
+            <div class="trait__details">
+                <h5 class="font-bold text-gray-700">描述：</h5>
+                <p class="text-gray-600 mt-1">{{ details.description }}</p>
+            </div>
+            <div class="trait__details">
+                <h5 class="font-bold text-gray-700">運用優勢：</h5>
+                <p class="text-gray-600 mt-1">{{ details.strengths }}</p>
+            </div>
+            <div class="trait__details">
+                <h5 class="font-bold text-gray-700">過度使用：</h5>
+                <p class="text-gray-600 mt-1">{{ details.overuse }}</p>
+            </div>
+            <div class="trait__details">
+                <h5 class="font-bold text-gray-700">陰影：</h5>
+                <p class="text-gray-600 mt-1">{{ details.shadow }}</p>
+            </div>
+            <div class="trait__details">
+                <h5 class="font-bold text-gray-700">小建議：</h5>
+                <p class="text-gray-600 mt-1">{{ details.suggestion }}</p>
+            </div>
         </div>
 
         <!-- Low Traits (slot or default) -->
         <div class="lowTraits">
             <h5 class="font-bold text-lg text-gray-700 text-center mb-2">潛在的限制與挑戰 (低分特質)</h5>
             <slot name="limits">
-                <div class="trait__feature">
+                <div class="trait__details">
                     <h5 class="font-bold text-gray-700">i 低（缺乏影響性）</h5>
                     <p class="text-gray-600 mt-1">話不多，社交主動性低，容易被認為冷冷的。</p>
                 </div>
@@ -97,6 +94,13 @@ const props = withDefaults(defineProps<{
         label: string
         // color: string
         description: string
+    },
+    details?: {
+        description: string;
+        strengths: string;
+        overuse: string;
+        shadow: string;
+        suggestion: string;
     }
 }>(), {
     title: '1. 你的真實風格 (核心自我)',
@@ -110,7 +114,14 @@ const props = withDefaults(defineProps<{
     primaryStyle: () => ({
         label: 'Cd 風格 (謹慎型/支配型)',
         // color: 'rgb(234,179,8)',
-        description: '您是「權威的專家」。擁有 C 的分析能力與 D 的主導性，是追求標準與真相的權威。'
+        description: '您是「權威的專家」。擁有 C 的分析能力與 D 的主導性，是追求標準與真相的權威。',
+    }),
+    details: () => ({
+        description: "在日常生活中，您是一位天生的決策者。您喜歡掌握方向，並享受事情快速推進的感覺。",
+        strengths: "您能為生活注入活力與方向感。朋友和家人常依賴您的果斷，來讓事情動起來。",
+        overuse: "有時可能會因為太有效率，而忽略了身邊人悠閒放鬆的需求，顯得有些強勢。",
+        shadow: "您內心可能不喜歡混亂或失控的感覺，希望能一切盡在掌握。",
+        suggestion: "練習享受「沒有計畫」的時光，把主導權交給別人，感受隨遇而安的樂趣。"
     })
 })
 
@@ -267,7 +278,7 @@ watch(() => props.scores, (next) => {
 }
 
 
-.trait__feature {
+.trait__details {
     padding: 1rem;
     background-color: rgb(249 250 251 / 0.5);
     border-width: 1px;
