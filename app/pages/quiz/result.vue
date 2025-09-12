@@ -6,20 +6,45 @@
         </div>
 
         <div id="summary-analysis-container" class="mb-8">
-            <div class="bg-teal-50 p-6 rounded-lg border border-teal-200 space-y-4 text-gray-700">
-                <h3 class="text-2xl font-bold text-center mb-4 text-gray-700">總結分析：真實風格 vs. 外顯模樣</h3>
-                <div v-html="summaryHtml">
-
-                </div>
-            </div>
-            <div v-if="isEasterEggCharacter"
-                class="p-6 bg-yellow-50 border border-yellow-400 rounded-lg text-yellow-800">
+            <div v-if="isEasterEggCharacter" class="summary__easterEgg">
                 <h3 class="font-bold text-lg">您的主要風格：整合型 (Integrator)</h3>
                 <p class="mt-2">您是一位極度平衡的「整合者」，在四種風格中都展現出極高的潛力。您能夠根據不同情境，靈活地展現出決斷、熱情、溫和與嚴謹等多重面貌。</p>
                 <p class="mt-4 font-semibold">特別提醒：</p>
                 <p class="mt-1">
                     通常我們都會有一些些的風格差距，但您的實在太平均了！這可能是您適應力極強的證明，但也可能代表在作答時不夠果決。希望您可以再試著做一次，或是帶入一些更具體的真實情境（例如：跟最要好的朋友、最討厭的主管互動時），也許能發現更鮮明的自己喔！
                 </p>
+            </div>
+            <div v-else class="bg-teal-50 p-6 rounded-lg border border-teal-200 space-y-4 text-gray-700">
+                <h3 class="text-2xl font-bold text-center mb-4 text-gray-700">總結分析：真實風格 vs. 外顯模樣</h3>
+                <!-- 直接貼在你的 <template> 中使用 -->
+                <div v-if="resultSummary.isSameTrait">
+                    <p>
+                        您是一位 <strong>「表裡如一」</strong> 的人。您的真實風格與外顯模樣高度一致，
+                        主要都展現出 <strong>{{ resultSummary.naturalName }}</strong> 的特質。
+                    </p>
+                    <p class="mt-2">
+                        這代表您在公開場合中，能夠自在地做自己，不需要耗費太多心力去「扮演」另一個角色。
+                        這種真實性與一致性，是您建立信任感與個人魅力的重要基礎。
+                    </p>
+                </div>
+                <div v-else>
+                    <p>
+                        您是一位 <strong>「情境適應者」</strong>。您的真實風格是
+                        <strong>{{ resultSummary.naturalName }}</strong>，但在公開或專業場合，您會調整為
+                        <strong>{{ resultSummary.workName }}</strong> 的模樣來應對環境需求。
+                    </p>
+                    <p class="mt-2">
+                        這展現了您出色的彈性與適應力，但也暗示著在切換角色的過程中，可能會消耗您額外的精力。
+                        了解這兩種風格的差異，有助於您更好地管理自己的能量。
+                    </p>
+
+                    <div v-if="resultSummary.isOpposite"
+                        class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800">
+                        <strong>特別提醒：</strong>
+                        您的風格轉變跨度極大，從 {{ resultSummary.naturalName }} 到對立的 {{ resultSummary.workName }}。
+                        這表示您為了適應環境付出了巨大的努力，請務必在工作之餘，給予真實的自己足夠的休息與充電時間。
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -29,13 +54,8 @@
 
         <div id="detailed-analysis-container">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-700 border-t pt-10">兩大風格下的你</h3>
-            <disc-card :model-value="discCardInfo"></disc-card>
-            <!-- <disc-card :scores="{
-                D: 24,
-                I: 24,
-                C: 24,
-                S: 24,
-            }"></disc-card> -->
+            <disc-card :model-value="discCardInfoNaturl"></disc-card>
+            <disc-card :style="{ 'margin-top': '24px' }" :model-value="discCardInfoWork"></disc-card>
         </div>
         <div v-if="personalAdvice" id="growth-suggestion-container" class="mt-12" style="display: block;">
             <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
@@ -84,7 +104,7 @@
 </template>
 <script setup lang="ts">
 import DiscCard from '~/components/DiscCard.client.vue'
-import type { IDiscCard, ICharacter, IScore, IQuizOption } from '~/types/discCard';
+import type { IDiscCard, ICharacter, IScore, IQuizOption, ISummary } from '~/types/discCard';
 const discStore = useDiscStore()
 const props = defineProps<{
     demonSlayerCharacters: ICharacter[],
@@ -96,11 +116,16 @@ const props = defineProps<{
 }>()
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
-const summaryHtml = ref<string>('')
+const resultSummary = ref<ISummary>({
+    isSameTrait: false,
+    isOpposite: false,
+    naturalName: "",
+    workName: "",
+})
 const isEasterEggCharacter = ref<boolean>(false)
 const personalAdvice = ref<string>('')
 const LOW_SCORE_THRESHOLD = 11
-const discCardInfo = ref<IDiscCard>({
+const discCardInfoNaturl = ref<IDiscCard>({
     title: "",
     traits: {
         name: '',
@@ -128,7 +153,7 @@ const discCardInfo = ref<IDiscCard>({
     lowTraits: [],
 })
 
-const discCardInfo2 = ref<IDiscCard>({
+const discCardInfoWork = ref<IDiscCard>({
     title: "",
     traits: {
         name: '',
@@ -158,7 +183,14 @@ const discCardInfo2 = ref<IDiscCard>({
 
 const firstCharacter = ref<ICharacter>()
 const secondCharacter = ref<ICharacter>()
-
+const opposites: {
+    [key: string]: any
+} = {
+    'D': 'S',
+    'S': 'D',
+    'I': 'C',
+    'C': 'I'
+};
 const traitInfo: {
     [key: string]: any
 } = {
@@ -206,18 +238,19 @@ onMounted(() => {
     quizWork.value = quizData
     const scoresNatural = calculateScore(quizNatural.value)
     const scoresWork = calculateScore(quizWork.value)
-    // Disc Card
-    discCardInfo.value = getDiscCardInfo({
+
+    // 自然傾向
+    discCardInfoNaturl.value = getDiscCardInfo({
         type: 'natural',
         scores: scoresNatural,
     })
-    discCardInfo.value.title = '1. 你的真實風格 (核心自我)'
-    // Disc Card2
-    discCardInfo2.value = getDiscCardInfo({
+    discCardInfoNaturl.value.title = '1. 你的真實風格 (核心自我)'
+    // 工作傾向
+    discCardInfoWork.value = getDiscCardInfo({
         type: 'work',
         scores: scoresWork,
     })
-    discCardInfo.value.title = '2. 你的外顯模樣 (公開形象)'
+    discCardInfoWork.value.title = '2. 你的外顯模樣 (公開形象)'
 
     displayResults(scoresNatural, scoresWork)
 })
@@ -243,9 +276,6 @@ function getTraitsSorted(score: IScore): [string, number][] {
 
 function displayResults(scoresNatural: IScore, scoresWork: IScore) {
     const matchedCharacters = findCharacterMatch(scoresNatural, scoresWork)
-    console.log({
-        matchedCharacters
-    })
     isEasterEggCharacter.value = false
     if (matchedCharacters[0] && matchedCharacters[0].isEasterEgg) {
         // 平均者
@@ -279,38 +309,24 @@ function generateSummaryAnalysis(scoresNatural: IScore, scoresWork: IScore) {
     const workTraits = getTraitsSorted(scoresWork) as any
     const primaryWork = workTraits[0][0]
 
-    const opposites: {
-        [key: string]: any
-    } = {
-        'D': 'S',
-        'S': 'D',
-        'I': 'C',
-        'C': 'I'
-    };
-
     // 組合內文
-    summaryHtml.value = ''
-    if (primaryNatural === primaryWork) {
-        summaryHtml.value = `<p>您是一位 <strong>「表裡如一」</strong> 的人。您的真實風格與外顯模樣高度一致，主要都展現出 <strong>${traitInfo[primaryNatural].name}</strong> 的特質。</p><p class="mt-2">這代表您在公開場合中，能夠自在地做自己，不需要耗費太多心力去「扮演」另一個角色。這種真實性與一致性，是您建立信任感與個人魅力的重要基礎。</p>`;
-    } else {
-        summaryHtml.value = `<p>您是一位 <strong>「情境適應者」</strong>。您的真實風格是 <strong>${traitInfo[primaryNatural].name}</strong>，但在公開或專業場合，您會調整為 <strong>${traitInfo[primaryWork].name}</strong> 的模樣來應對環境需求。</p><p class="mt-2">這展現了您出色的彈性與適應力，但也暗示著在切換角色的過程中，可能會消耗您額外的精力。了解這兩種風格的差異，有助於您更好地管理自己的能量。</p>`;
-        if (opposites[primaryNatural] === primaryWork) {
-            summaryHtml.value += `<div class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800"><strong>特別提醒：</strong> 您的風格轉變跨度極大，從 ${traitInfo[primaryNatural].shortName} 到對立的 ${traitInfo[primaryWork].shortName}。這表示您為了適應環境付出了巨大的努力，請務必在工作之餘，給予真實的自己足夠的休息與充電時間。</div>`;
-        }
-    }
+    resultSummary.value.isSameTrait = primaryNatural === primaryWork
+    resultSummary.value.isOpposite = opposites[primaryNatural] === primaryWork
+    resultSummary.value.naturalName = traitInfo[primaryNatural].shortName
+    resultSummary.value.workName = traitInfo[primaryWork].shortName
 }
 
 function findCharacterMatch(scoresNatural: IScore, scoresWork: IScore): ICharacter[] {
     const allScoresNatural = Object.values(scoresNatural);
 
-    // // 平均整合者
-    // const maxScoreNatural = Math.max(...allScoresNatural)
-    // const minScoreNatural = Math.min(...allScoresNatural)
-    // if (maxScoreNatural - minScoreNatural <= 7) {
-    //     const murata = props.demonSlayerCharacters.find((c: any) => c.isEasterEgg);
-    //     if (murata)
-    //         return [murata];
-    // }
+    // 平均整合者
+    const maxScoreNatural = Math.max(...allScoresNatural)
+    const minScoreNatural = Math.min(...allScoresNatural)
+    if (maxScoreNatural - minScoreNatural <= 7) {
+        const murata = props.demonSlayerCharacters.find((c: any) => c.isEasterEgg);
+        if (murata)
+            return [murata];
+    }
 
     const natualTraits = getTraitsSorted(scoresNatural) as any
     const primaryNatural = natualTraits[0][0]
@@ -404,7 +420,7 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
     const scores: IScore = payload.scores
     const infoType: string = payload.type
     const discCardTemp: IDiscCard = {
-        title: '1. 你的真實風格 (核心自我)',
+        title: '',
         scores,
         traits: {
             name: '',
@@ -527,6 +543,16 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
 .result__characters {
     display: grid;
     gap: 1.5rem;
+}
+
+.summary__easterEgg {
+    color: rgb(133 77 14 / var(--tw-text-opacity, 1));
+    padding: 1.5rem;
+    background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1));
+    border-color: rgb(250 204 21 / var(--tw-border-opacity, 1));
+    border-left-width: 4px;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
 }
 
 @media screen and (min-width:992px) {

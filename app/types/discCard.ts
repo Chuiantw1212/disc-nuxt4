@@ -53,3 +53,13 @@ export interface ICharacter {
     lowTraitContext: string,
     isEasterEgg: boolean,
 }
+
+// 關鍵字／鏤空欄位介面
+export interface ISummary {
+    isSameTrait: boolean,
+    isOpposite: boolean,
+    /** 風格名稱A：原 traitInfo[primaryNatural].name */
+    naturalName: string;
+    /** 風格名稱B：原 traitInfo[primaryWork].name */
+    workName: string;
+}

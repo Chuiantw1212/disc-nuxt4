@@ -62,6 +62,9 @@
                 <p class="text-gray-600 mt-1">{{ modelValue.coreTraitDetails.suggestion }}</p>
             </div>
         </div>
+
+        <hr class="card__hr" />
+
         <div v-if="modelValue.lowTraits.length" class="lowTraits">
             <h5 class="font-bold text-lg text-gray-700 text-center mb-2">潛在的限制與挑戰 (低分特質)</h5>
             <div v-for="(lowTrait, index) in modelValue.lowTraits" :key="index" class="trait__details">
@@ -262,6 +265,10 @@ watch(() => props.modelValue.scores, (next) => {
 
 .lowTraits {
     margin-top: 1.5rem;
+}
+
+.card__hr {
+    margin: 24px 0px;
 }
 
 @media screen and (min-width:992px) {
