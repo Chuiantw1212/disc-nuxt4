@@ -32,4 +32,15 @@ export default defineNuxtConfig({
   //     // ignore: ['/admin']             // 不想輸出的路由
   //   }
   // },
+  nitro: {
+    // 使用 Firebase Functions Gen2
+    firebase: {
+      gen: 2,
+      httpsOptions: {
+        region: 'asia-east1', // 換你就近的區域
+        maxInstances: 3
+      },
+      nodeVersion: '20'
+    }
+  }
 })
