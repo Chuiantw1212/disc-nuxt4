@@ -1,6 +1,6 @@
 <template>
     <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
-        <h4 class="text-2xl font-bold text-gray-800 mb-4 text-center">{{ title }}</h4>
+        <h4 class="text-2xl font-bold text-gray-800 mb-4 text-center">{{ modelValue.title }}</h4>
 
         <div class="nature__body">
             <!-- Radar Chart -->
@@ -12,19 +12,19 @@
             <div class="analysis__traitSquares">
                 <div class="trait__square">
                     <h5 class="text-base font-bold text-gray-800">支配型 (D)</h5>
-                    <p class="square__value" :style="{ color: colors.D }">{{ scores.D }}</p>
+                    <p class="square__value" :style="{ color: colors.D }">{{ modelValue.scores.D }}</p>
                 </div>
                 <div class="trait__square">
                     <h5 class="text-base font-bold text-gray-800">影響型 (i)</h5>
-                    <p class="square__value" :style="{ color: colors.I }">{{ scores.I }}</p>
+                    <p class="square__value" :style="{ color: colors.I }">{{ modelValue.scores.I }}</p>
                 </div>
                 <div class="trait__square primary">
                     <h5 class="text-base font-bold text-gray-800">謹慎型 (C)</h5>
-                    <p class="square__value" :style="{ color: colors.C }">{{ scores.C }}</p>
+                    <p class="square__value" :style="{ color: colors.C }">{{ modelValue.scores.C }}</p>
                 </div>
                 <div class="trait__square">
                     <h5 class="text-base font-bold text-gray-800">穩健型 (S)</h5>
-                    <p class="square__value" :style="{ color: colors.S }">{{ scores.S }}</p>
+                    <p class="square__value" :style="{ color: colors.S }">{{ modelValue.scores.S }}</p>
                 </div>
             </div>
         </div>
@@ -80,12 +80,14 @@
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 // 若你已在 plugins/chart.client.ts 裡 Chart.register(...registerables)，用下行即可：
 import { Chart, type ChartData, type ChartOptions } from 'chart.js'
+import type { IDiscCard } from '~/types/discCard';
 // 若沒有註冊，改用： import Chart from 'chart.js/auto'
 
 type Scores = { D: number; I: number; C: number; S: number }
 type ColorMap = { D: string; I: string; C: string; S: string, [key: string]: string }
 const styleColor = ref<string>('')
 const props = withDefaults(defineProps<{
+    modelValue: IDiscCard,
     title?: string
     coreTitle?: string
     scores: Scores

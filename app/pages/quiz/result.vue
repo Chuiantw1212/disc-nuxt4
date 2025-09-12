@@ -29,18 +29,18 @@
 
         <div id="detailed-analysis-container">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-700 border-t pt-10">兩大風格下的你</h3>
-            <disc-card :scores="{
+            <disc-card :model-value="discCardInfo" :scores="{
                 D: 24,
                 I: 24,
                 C: 24,
                 S: 24,
-            }" :primaryStyle="primaryStyle"></disc-card>
-            <disc-card :scores="{
+            }" :primaryStyle="primaryStyle" :details="details" :coreTitle="coreTitle"></disc-card>
+            <!-- <disc-card :scores="{
                 D: 24,
                 I: 24,
                 C: 24,
                 S: 24,
-            }"></disc-card>
+            }"></disc-card> -->
         </div>
         <div v-if="personalAdvice" id="growth-suggestion-container" class="mt-12" style="display: block;">
             <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
@@ -120,19 +120,52 @@
 <script setup lang="ts">
 import DiscCard from '~/components/DiscCard.client.vue'
 import { Chart } from 'chart.js'
+import type { IDiscCard } from '~/types/discCard';
 const discStore = useDiscStore()
 const props = defineProps<{
     demonSlayerCharacters: ICharacter[],
     personalizedAdviceContent: any,
     combinedAnalysisContent: any,
     analysisContent: any,
+    traitInfo: any,
 }>()
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
 const summaryHtml = ref<string>('')
 const isEasterEggCharacter = ref<boolean>(false)
-
+const details = ref<any>({})
+const coreTitle = ref<string>('')
 const personalAdvice = ref<string>('')
+
+const discCardInfo = ref<IDiscCard>({
+    title: "",
+    traits: "",
+    primaryTrait: "",
+    primartTraitDescription: "",
+    primaryTraitDetails: "",
+    secondaryTrait: "",
+    scores: {
+        D: 0,
+        I: 0,
+        S: 0,
+        C: 0,
+    }
+})
+
+const discCardInfo2 = ref<IDiscCard>({
+    title: "",
+    traits: "",
+    primaryTrait: "",
+    primartTraitDescription: "",
+    primaryTraitDetails: "",
+    secondaryTrait: "",
+    scores: {
+        D: 0,
+        I: 0,
+        S: 0,
+        C: 0,
+    }
+})
 
 interface IStyle {
     label: string
@@ -395,15 +428,18 @@ function findCharacterMatch(scoresNatural: IScore, scoresWork: IScore): ICharact
 function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
     const analysisSections = [{
         id: 'natural',
-        title: "1. 你的真實風格 (核心自我)",
         scores: scoresNatural,
         context: 'natural'
     }, {
         id: 'work',
-        title: "2. 你的外顯模樣 (公開形象)",
         scores: scoresWork,
         context: 'work'
     }];
+
+    discCardInfo.value.title = '1. 你的真實風格 (核心自我)'
+    discCardInfo.value.scores = scoresNatural
+
+    discCardInfo2.value.title = '2. 你的外顯模樣 (公開形象)'
 
     analysisSections.forEach(setting => {
         const { scores, id, context } = setting
@@ -424,9 +460,14 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
                 primaryStyle.value.description = props.combinedAnalysisContent[combinedKey].description;
         }
 
+        // TraitInfo
+        const trainInfo = props.traitInfo[primaryTraitKey]
+        coreTitle.value = trainInfo.name
+
         // 核心特質解析
         const traitAnalysis = props.analysisContent[primaryTraitKey]
         const traitGroup = traitAnalysis[context]
+        details.value = traitGroup
 
         // 圖表
         const canvasId = `chart-${id}`;

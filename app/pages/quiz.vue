@@ -1,7 +1,8 @@
 <template>
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl min-h-screen flex flex-col justify-center">
         <NuxtPage :demonSlayerCharacters="demonSlayerCharacters" :analysisContent="analysisContent"
-            :combinedAnalysisContent="combinedAnalysisContent">
+            :combinedAnalysisContent="combinedAnalysisContent" :personalizedAdviceContent="personalizedAdviceContent"
+            :traitInfo="traitInfo">
         </NuxtPage>
     </div>
 </template>
