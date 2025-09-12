@@ -89,11 +89,6 @@ const styleColor = ref<string>('')
 const props = withDefaults(defineProps<{
     modelValue: IDiscCard,
     colors?: ColorMap
-    primaryStyle?: {
-        label: string
-        // color: string
-        description: string
-    },
     details?: {
         description: string;
         strengths: string;
@@ -107,11 +102,6 @@ const props = withDefaults(defineProps<{
         I: 'rgb(236,72,153)',  // pink-500
         C: 'rgb(234,179,8)',   // amber-400
         S: 'rgb(59,130,246)'   // blue-500
-    }),
-    primaryStyle: () => ({
-        label: 'Cd 風格 (謹慎型/支配型)',
-        // color: 'rgb(234,179,8)',
-        description: '您是「權威的專家」。擁有 C 的分析能力與 D 的主導性，是追求標準與真相的權威。',
     }),
     details: () => ({
         description: "在日常生活中，您是一位天生的決策者。您喜歡掌握方向，並享受事情快速推進的感覺。",
@@ -128,7 +118,7 @@ onMounted(() => {
 })
 
 function setStyleColor() {
-    const coreTrait = props.primaryStyle.label[0]
+    const coreTrait = props.modelValue.coreTrait.key
     if (coreTrait) {
         const selectedColor = props.colors[coreTrait]
         if (selectedColor) {
