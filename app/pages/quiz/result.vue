@@ -144,8 +144,13 @@ const discCardInfo = ref<IDiscCard>({
         title: '',
         key: '',
     },
-    primartTraitDescription: "",
-    coreTraitDetails: "",
+    coreTraitDetails: {
+        description: "",
+        strengths: "",
+        overuse: "",
+        shadow: "",
+        suggestion: "",
+    },
     secondaryTrait: "",
     scores: {
         D: 0,
@@ -166,8 +171,13 @@ const discCardInfo2 = ref<IDiscCard>({
         title: '',
         key: '',
     },
-    primartTraitDescription: "",
-    coreTraitDetails: "",
+    coreTraitDetails: {
+        description: "",
+        strengths: "",
+        overuse: "",
+        shadow: "",
+        suggestion: "",
+    },
     secondaryTrait: "",
     scores: {
         D: 0,
@@ -452,7 +462,7 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
     discCardInfo2.value.title = '2. 你的外顯模樣 (公開形象)'
 
     analysisSections.forEach(setting => {
-        const { scores, id, context } = setting
+        const { scores, context } = setting
         // featrues
         const traits = getTraitsSorted(scores) as any
         const coreTraitKey = traits[0][0]
@@ -466,8 +476,9 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
         if (primaryScore - secondaryScore <= 8 && primaryScore > 0 && secondaryScore > 0) {
             let combinedKey = coreTraitKey.toLowerCase() === 'i' ? 'i' + secondaryTraitKey : coreTraitKey + secondaryTraitKey.toLowerCase();
             discCardInfo.value.traits.name = `${coreTraitKey}${secondaryTraitKey.toLowerCase()} 風格 (${traitInfo[coreTraitKey].shortName}/${traitInfo[secondaryTraitKey].shortName})`;
-            if (props.combinedAnalysisContent[combinedKey])
+            if (props.combinedAnalysisContent[combinedKey]) {
                 discCardInfo.value.traits.description = props.combinedAnalysisContent[combinedKey].description;
+            }
         }
 
         // TraitInfo
@@ -477,60 +488,8 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
         // 核心特質解析
         const traitAnalysis = props.analysisContent[coreTraitKey]
         const traitGroup = traitAnalysis[context]
-        details.value = traitGroup
-
-        // 圖表
-        const canvasId = `chart-${id}`;
-        const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement
-        if (!canvasElement) {
-            return
-        }
-        const ctx = canvasElement.getContext('2d');
-        if (!ctx) {
-            return
-        }
-        new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['D', 'i', 'S', 'C'],
-                datasets: [{
-                    label: '分數',
-                    data: [scores.D, scores.I, scores.S, scores.C],
-                    backgroundColor: `rgba(20, 184, 166, 0.2)`,
-                    borderColor: `rgba(13, 148, 136, 1)`,
-                    pointBackgroundColor: `rgba(13, 148, 136, 1)`,
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgb(13, 148, 136)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 36,
-                        ticks: {
-                            stepSize: 9
-                        },
-                        pointLabels: {
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            }
-                        },
-                        startAngle: -45
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
+        discCardInfo.value.coreTraitDetails = traitGroup
+        // details.value = traitGroup
     })
 }
 </script>

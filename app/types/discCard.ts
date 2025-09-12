@@ -9,8 +9,13 @@ export interface IDiscCard {
         key: 'D' | 'I' | 'S' | 'C' | '',
         title: string,
     },
-    primartTraitDescription: string,
-    coreTraitDetails: string,
+    coreTraitDetails: {
+        description: string,
+        strengths: string,
+        overuse: string,
+        shadow: string,
+        suggestion: string,
+    },
     secondaryTrait: 'D' | 'I' | 'S' | 'C' | '',
     scores: {
         D: number,

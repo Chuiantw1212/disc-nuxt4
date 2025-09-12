@@ -43,23 +43,23 @@
             <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 ({{ modelValue.coreTrait.title }})</h5>
             <div class="trait__details">
                 <h5 class="font-bold text-gray-700">描述：</h5>
-                <p class="text-gray-600 mt-1">{{ details.description }}</p>
+                <p class="text-gray-600 mt-1">{{ modelValue.coreTraitDetails.description }}</p>
             </div>
             <div class="trait__details">
                 <h5 class="font-bold text-gray-700">運用優勢：</h5>
-                <p class="text-gray-600 mt-1">{{ details.strengths }}</p>
+                <p class="text-gray-600 mt-1">{{ modelValue.coreTraitDetails.strengths }}</p>
             </div>
             <div class="trait__details">
                 <h5 class="font-bold text-gray-700">過度使用：</h5>
-                <p class="text-gray-600 mt-1">{{ details.overuse }}</p>
+                <p class="text-gray-600 mt-1">{{ modelValue.coreTraitDetails.overuse }}</p>
             </div>
             <div class="trait__details">
                 <h5 class="font-bold text-gray-700">陰影：</h5>
-                <p class="text-gray-600 mt-1">{{ details.shadow }}</p>
+                <p class="text-gray-600 mt-1">{{ modelValue.coreTraitDetails.shadow }}</p>
             </div>
             <div class="trait__details">
                 <h5 class="font-bold text-gray-700">小建議：</h5>
-                <p class="text-gray-600 mt-1">{{ details.suggestion }}</p>
+                <p class="text-gray-600 mt-1">{{ modelValue.coreTraitDetails.suggestion }}</p>
             </div>
         </div>
 
@@ -89,13 +89,6 @@ const styleColor = ref<string>('')
 const props = withDefaults(defineProps<{
     modelValue: IDiscCard,
     colors?: ColorMap
-    details?: {
-        description: string;
-        strengths: string;
-        overuse: string;
-        shadow: string;
-        suggestion: string;
-    }
 }>(), {
     colors: () => ({
         D: 'rgb(34,197,94)',   // green-500
@@ -103,13 +96,6 @@ const props = withDefaults(defineProps<{
         C: 'rgb(234,179,8)',   // amber-400
         S: 'rgb(59,130,246)'   // blue-500
     }),
-    details: () => ({
-        description: "在日常生活中，您是一位天生的決策者。您喜歡掌握方向，並享受事情快速推進的感覺。",
-        strengths: "您能為生活注入活力與方向感。朋友和家人常依賴您的果斷，來讓事情動起來。",
-        overuse: "有時可能會因為太有效率，而忽略了身邊人悠閒放鬆的需求，顯得有些強勢。",
-        shadow: "您內心可能不喜歡混亂或失控的感覺，希望能一切盡在掌握。",
-        suggestion: "練習享受「沒有計畫」的時光，把主導權交給別人，感受隨遇而安的樂趣。"
-    })
 })
 
 onMounted(() => {
