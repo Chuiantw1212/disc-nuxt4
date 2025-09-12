@@ -1,12 +1,16 @@
 export interface IDiscCard {
     title: string,
-    traits: string,
-    primaryTrait: {
+    traits: {
+        name: string,
+        key: string,
+        description: string,
+    },
+    coreTrait: {
         key: 'D' | 'I' | 'S' | 'C' | '',
         title: string,
     },
     primartTraitDescription: string,
-    primaryTraitDetails: string,
+    coreTraitDetails: string,
     secondaryTrait: 'D' | 'I' | 'S' | 'C' | '',
     scores: {
         D: number,

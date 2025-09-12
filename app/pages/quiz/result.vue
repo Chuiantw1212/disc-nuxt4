@@ -135,13 +135,17 @@ const personalAdvice = ref<string>('')
 
 const discCardInfo = ref<IDiscCard>({
     title: "",
-    traits: "",
-    primaryTrait: {
+    traits: {
+        name: '',
+        key: '',
+        description: '',
+    },
+    coreTrait: {
         title: '',
         key: '',
     },
     primartTraitDescription: "",
-    primaryTraitDetails: "",
+    coreTraitDetails: "",
     secondaryTrait: "",
     scores: {
         D: 0,
@@ -153,13 +157,17 @@ const discCardInfo = ref<IDiscCard>({
 
 const discCardInfo2 = ref<IDiscCard>({
     title: "",
-    traits: "",
-    primaryTrait: {
+    traits: {
+        name: '',
+        key: '',
+        description: '',
+    },
+    coreTrait: {
         title: '',
         key: '',
     },
     primartTraitDescription: "",
-    primaryTraitDetails: "",
+    coreTraitDetails: "",
     secondaryTrait: "",
     scores: {
         D: 0,
@@ -447,27 +455,27 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
         const { scores, id, context } = setting
         // featrues
         const traits = getTraitsSorted(scores) as any
-        const primaryTraitKey = traits[0][0]
+        const coreTraitKey = traits[0][0]
         const primaryScore = traits[0][1]
         const secondaryTraitKey = traits[1][0]
         const secondaryScore = traits[1][1]
 
         // 主要風格
-        primaryStyle.value.label = traitInfo[primaryTraitKey].name
-        primaryStyle.value.description = ''
+        discCardInfo.value.traits.name = traitInfo[coreTraitKey].name
+        discCardInfo.value.traits.description = ''
         if (primaryScore - secondaryScore <= 8 && primaryScore > 0 && secondaryScore > 0) {
-            let combinedKey = primaryTraitKey.toLowerCase() === 'i' ? 'i' + secondaryTraitKey : primaryTraitKey + secondaryTraitKey.toLowerCase();
-            primaryStyle.value.label = `${primaryTraitKey}${secondaryTraitKey.toLowerCase()} 風格 (${traitInfo[primaryTraitKey].shortName}/${traitInfo[secondaryTraitKey].shortName})`;
+            let combinedKey = coreTraitKey.toLowerCase() === 'i' ? 'i' + secondaryTraitKey : coreTraitKey + secondaryTraitKey.toLowerCase();
+            discCardInfo.value.traits.name = `${coreTraitKey}${secondaryTraitKey.toLowerCase()} 風格 (${traitInfo[coreTraitKey].shortName}/${traitInfo[secondaryTraitKey].shortName})`;
             if (props.combinedAnalysisContent[combinedKey])
-                primaryStyle.value.description = props.combinedAnalysisContent[combinedKey].description;
+                discCardInfo.value.traits.description = props.combinedAnalysisContent[combinedKey].description;
         }
 
         // TraitInfo
-        const trainInfo = props.traitInfo[primaryTraitKey]
-        discCardInfo.value.primaryTrait.title = trainInfo.name
+        const trainInfo = props.traitInfo[coreTraitKey]
+        discCardInfo.value.coreTrait.title = trainInfo.name
 
         // 核心特質解析
-        const traitAnalysis = props.analysisContent[primaryTraitKey]
+        const traitAnalysis = props.analysisContent[coreTraitKey]
         const traitGroup = traitAnalysis[context]
         details.value = traitGroup
 

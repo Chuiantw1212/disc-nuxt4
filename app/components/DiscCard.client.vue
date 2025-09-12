@@ -33,14 +33,14 @@
         <div class="text-center p-4 bg-gray-50 rounded-md">
             <p class="text-lg font-semibold">
                 主要風格：
-                <span :style="{ color: styleColor }">{{ primaryStyle.label }}</span>
+                <span :style="{ color: styleColor }">{{ modelValue.traits.name }}</span>
             </p>
-            <p class="text-gray-600 mt-2">{{ primaryStyle.description }}</p>
+            <p class="text-gray-600 mt-2">{{ modelValue.traits.description }}</p>
         </div>
 
         <!-- Core Traits (slot or default) -->
         <div class="space-y-4 text-left mt-6">
-            <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 ({{ modelValue.primaryTrait.title }})</h5>
+            <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 ({{ modelValue.coreTrait.title }})</h5>
             <div class="trait__details">
                 <h5 class="font-bold text-gray-700">描述：</h5>
                 <p class="text-gray-600 mt-1">{{ details.description }}</p>
@@ -88,7 +88,6 @@ type ColorMap = { D: string; I: string; C: string; S: string, [key: string]: str
 const styleColor = ref<string>('')
 const props = withDefaults(defineProps<{
     modelValue: IDiscCard,
-    coreTitle?: string
     colors?: ColorMap
     primaryStyle?: {
         label: string
@@ -103,7 +102,6 @@ const props = withDefaults(defineProps<{
         suggestion: string;
     }
 }>(), {
-    coreTitle: '謹慎型 (C)',
     colors: () => ({
         D: 'rgb(34,197,94)',   // green-500
         I: 'rgb(236,72,153)',  // pink-500
@@ -130,9 +128,9 @@ onMounted(() => {
 })
 
 function setStyleColor() {
-    const primaryTrait = props.primaryStyle.label[0]
-    if (primaryTrait) {
-        const selectedColor = props.colors[primaryTrait]
+    const coreTrait = props.primaryStyle.label[0]
+    if (coreTrait) {
+        const selectedColor = props.colors[coreTrait]
         if (selectedColor) {
             styleColor.value = selectedColor
         }
@@ -232,7 +230,7 @@ onBeforeUnmount(() => {
     chart = null
 })
 
-watch(() => props.scores, (next) => {
+watch(() => props.modelValue.scores, (next) => {
     if (!chart) return
     chart.data = buildData()
     chart.update()
