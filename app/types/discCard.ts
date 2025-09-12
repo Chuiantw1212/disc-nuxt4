@@ -22,5 +22,8 @@ export interface IDiscCard {
         I: number,
         S: number,
         C: number,
+    },
+    lowTrait: {
+        description: string,
     }
 }

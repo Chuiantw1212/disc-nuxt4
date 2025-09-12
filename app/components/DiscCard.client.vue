@@ -66,12 +66,14 @@
         <!-- Low Traits (slot or default) -->
         <div class="lowTraits">
             <h5 class="font-bold text-lg text-gray-700 text-center mb-2">潛在的限制與挑戰 (低分特質)</h5>
-            <slot name="limits">
-                <div class="trait__details">
-                    <h5 class="font-bold text-gray-700">i 低（缺乏影響性）</h5>
-                    <p class="text-gray-600 mt-1">話不多，社交主動性低，容易被認為冷冷的。</p>
-                </div>
-            </slot>
+            <div class="trait__details">
+                <h5 class="font-bold text-gray-700">i 低（缺乏影響性）</h5>
+                <p class="text-gray-600 mt-1">話不多，社交主動性低，容易被認為冷冷的。</p>
+            </div>
+            <div class="trait__details">
+                <h5 class="font-bold text-gray-700">i 低（缺乏影響性）</h5>
+                <p class="text-gray-600 mt-1">話不多，社交主動性低，容易被認為冷冷的。</p>
+            </div>
         </div>
     </div>
 </template>
@@ -261,6 +263,7 @@ watch(() => props.modelValue.scores, (next) => {
     border-width: 1px;
     border-style: solid;
     border-color: #e5e7eb;
+    margin-top: 16px;
 }
 
 .lowTraits {

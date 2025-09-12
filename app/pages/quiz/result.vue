@@ -50,13 +50,13 @@
         <div id="character-match-container" class="mt-12">
             <div class="border-t pt-10">
                 <h3 class="text-2xl font-bold text-center mb-6 text-gray-700">最接近你的鬼滅之刃角色</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="result__characters">
                     <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm flex flex-col">
                         <div class="text-center">
                             <p class="text-gray-500 text-sm">蟲柱繼子</p>
                             <h4 class="text-2xl font-bold text-gray-800">栗花落香奈乎</h4>
                         </div>
-                        <div class="text-sm my-4 text-center space-y-1">
+                        <div class="characters__traits">
                             <p><strong>外在風格:</strong> <span class="font-bold"
                                     style="color: rgb(234, 179, 8);">謹慎型</span></p>
                             <p><strong>內在風格:</strong> <span class="font-bold"
@@ -72,7 +72,7 @@
                             <p class="text-gray-500 text-sm">盜帳號駭客 / 純愛畫家</p>
                             <h4 class="text-2xl font-bold text-gray-800">愈史郎</h4>
                         </div>
-                        <div class="text-sm my-4 text-center space-y-1">
+                        <div class="characters__traits">
                             <p><strong>外在風格:</strong> <span class="font-bold"
                                     style="color: rgb(234, 179, 8);">謹慎型</span> / <span class="font-bold"
                                     style="color: rgb(34, 197, 94);">支配型</span></p>
@@ -125,6 +125,7 @@ const props = defineProps<{
     analysisContent: any,
     traitInfo: any,
 }>()
+// const lowScoresHtml = ref<string>('')
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
 const summaryHtml = ref<string>('')
@@ -132,7 +133,7 @@ const isEasterEggCharacter = ref<boolean>(false)
 const details = ref<any>({})
 const coreTitle = ref<string>('')
 const personalAdvice = ref<string>('')
-
+const LOW_SCORE_THRESHOLD = 11
 const discCardInfo = ref<IDiscCard>({
     title: "",
     traits: {
@@ -268,8 +269,13 @@ onMounted(() => {
     quizWork.value = quizData
     const scoresNatural = calculateScore(quizNatural.value)
     const scoresWork = calculateScore(quizWork.value)
-    drawCharts(scoresNatural, scoresWork)
-    displayResults(scoresNatural, scoresWork)
+    // Disc Card
+    discCardInfo.value = getDiscCardInfo(scoresNatural)
+    discCardInfo.value.title = '1. 你的真實風格 (核心自我)'
+    // Disc Card2
+    discCardInfo2.value = getDiscCardInfo(scoresWork)
+    discCardInfo.value.title = '2. 你的外顯模樣 (公開形象)'
+    // displayResults(scoresNatural, scoresWork)
 })
 
 function calculateScore(quizData: IQuizOption[]) {
@@ -445,52 +451,79 @@ function findCharacterMatch(scoresNatural: IScore, scoresWork: IScore): ICharact
     }
 }
 
-function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
-    const analysisSections = [{
-        id: 'natural',
-        scores: scoresNatural,
-        context: 'natural'
-    }, {
-        id: 'work',
-        scores: scoresWork,
-        context: 'work'
-    }];
+function getDiscCardInfo(scores: IScore) {
+    const discCardTemp: IDiscCard = {
+        title: '1. 你的真實風格 (核心自我)',
+        scores,
+        traits: {
+            name: '',
+            key: '',
+            description: '',
+        },
+        coreTrait: {
+            title: '',
+            key: '',
+        },
+        coreTraitDetails: {
+            description: "",
+            strengths: "",
+            overuse: "",
+            shadow: "",
+            suggestion: "",
+        },
+        secondaryTrait: "",
+    }
 
-    discCardInfo.value.title = '1. 你的真實風格 (核心自我)'
-    discCardInfo.value.scores = scoresNatural
-
-    discCardInfo2.value.title = '2. 你的外顯模樣 (公開形象)'
-
-    analysisSections.forEach(setting => {
-        const { scores, context } = setting
-        // featrues
-        const traits = getTraitsSorted(scores) as any
-        const coreTraitKey = traits[0][0]
-        const primaryScore = traits[0][1]
-        const secondaryTraitKey = traits[1][0]
-        const secondaryScore = traits[1][1]
-
-        // 主要風格
-        discCardInfo.value.traits.name = traitInfo[coreTraitKey].name
-        discCardInfo.value.traits.description = ''
-        if (primaryScore - secondaryScore <= 8 && primaryScore > 0 && secondaryScore > 0) {
-            let combinedKey = coreTraitKey.toLowerCase() === 'i' ? 'i' + secondaryTraitKey : coreTraitKey + secondaryTraitKey.toLowerCase();
-            discCardInfo.value.traits.name = `${coreTraitKey}${secondaryTraitKey.toLowerCase()} 風格 (${traitInfo[coreTraitKey].shortName}/${traitInfo[secondaryTraitKey].shortName})`;
-            if (props.combinedAnalysisContent[combinedKey]) {
-                discCardInfo.value.traits.description = props.combinedAnalysisContent[combinedKey].description;
-            }
+    // featrues
+    const traits: [string, number][] = getTraitsSorted(scores)
+    let coreTraitKey = ''
+    let primaryScore = 0
+    let secondaryTraitKey = ''
+    let secondaryScore = 0
+    if (traits.length > 0 && traits[0]) {
+        coreTraitKey = traits[0][0]
+        primaryScore = traits[0][1]
+        if (traits.length > 1 && traits[1]) {
+            secondaryTraitKey = traits[1][0]
+            secondaryScore = traits[1][1]
         }
+    }
 
-        // TraitInfo
-        const trainInfo = props.traitInfo[coreTraitKey]
-        discCardInfo.value.coreTrait.title = trainInfo.name
+    // 主要風格
+    discCardInfo.value.traits.name = traitInfo[coreTraitKey].name
+    discCardInfo.value.traits.description = ''
+    if (primaryScore - secondaryScore <= 8 && primaryScore > 0 && secondaryScore > 0) {
+        let combinedKey = coreTraitKey.toLowerCase() === 'i' ? 'i' + secondaryTraitKey : coreTraitKey + secondaryTraitKey.toLowerCase();
+        discCardInfo.value.traits.name = `${coreTraitKey}${secondaryTraitKey.toLowerCase()} 風格 (${traitInfo[coreTraitKey].shortName}/${traitInfo[secondaryTraitKey].shortName})`;
+        if (props.combinedAnalysisContent[combinedKey]) {
+            discCardInfo.value.traits.description = props.combinedAnalysisContent[combinedKey].description;
+        }
+    }
 
-        // 核心特質解析
-        const traitAnalysis = props.analysisContent[coreTraitKey]
-        const traitGroup = traitAnalysis[context]
-        discCardInfo.value.coreTraitDetails = traitGroup
-        // details.value = traitGroup
-    })
+    // TraitInfo
+    const trainInfo = props.traitInfo[coreTraitKey]
+    discCardInfo.value.coreTrait.title = trainInfo.name
+
+    // 核心特質解析
+    const traitAnalysis = props.analysisContent[coreTraitKey]
+    const traitGroup = traitAnalysis['natural']
+    discCardInfo.value.coreTraitDetails = traitGroup
+
+    // 低分特質
+    const lowScoreTraits = traits.filter((trait) => {
+        const score = trait[1]
+        return score <= LOW_SCORE_THRESHOLD
+    });
+    // if (lowScoreTraits.length > 0) {
+    //     lowScoresHtml = lowScoreTraits.map(([key,]) => {
+    //         const content = lowScoreAnalysisContent[key];
+    //         return `<div class="p-4 bg-gray-50/50 rounded-md border"><h5 class="font-bold text-gray-700">${content.title}</h5><p class="text-gray-600 mt-1">${content[section.context]}</p></div>`;
+    //     }
+    //     ).join('');
+    // } else {
+    //     lowScoresHtml = `<p class="text-center text-gray-500">在此情境下，您沒有特別缺乏的特質。</p>`;
+    // }
+    return discCardTemp
 }
 </script>
 <style lang="scss" scoped>
@@ -537,6 +570,15 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
     border-color: #e5e7eb;
 }
 
+.result__characters {
+    display: grid;
+    gap: 1.5rem;
+    .characters__traits{
+        margin: 1rem 0px;
+        text-align: center;
+    }
+}
+
 @media screen and (min-width:992px) {
     .nature__body {
         display: flex;
@@ -551,6 +593,10 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
                 font-size: 48px;
             }
         }
+    }
+
+    .result__characters{
+        grid-template-columns: auto auto;
     }
 }
 </style>
