@@ -30,7 +30,7 @@
         </div>
 
         <!-- Primary style summary -->
-        <div class="text-center p-4 bg-gray-50 rounded-md">
+        <div class="card__primary">
             <p class="text-lg font-semibold">
                 主要風格：
                 <span :style="{ color: styleColor }">{{ modelValue.traits.name }}</span>
@@ -248,6 +248,14 @@ watch(() => props.modelValue.scores, (next) => {
             }
         }
     }
+}
+
+.card__primary {
+    text-align: center;
+    padding: 1rem;
+    --tw-bg-opacity: 1;
+    background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+    border-radius: 0.375rem;
 }
 
 

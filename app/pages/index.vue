@@ -47,7 +47,7 @@ const form = ref({
 
 function starQuiz() {
     navigateTo({
-        name: 'quiz-internal'
+        name: 'quiz-1'
     })
 }
 // Use a static import for server-side compatibility

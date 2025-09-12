@@ -60,7 +60,7 @@
         <div v-if="personalAdvice" id="growth-suggestion-container" class="mt-12" style="display: block;">
             <div class="border border-gray-200 p-6 rounded-lg shadow-sm">
                 <h3 class="text-2xl font-bold text-center mb-4 text-gray-700">個人化成長建議</h3>
-                <div class="p-4 bg-blue-50/50 rounded-md border border-blue-200 text-gray-700">
+                <div class="suggestion__advice">
                     <p>{{ personalAdvice }}</p>
                 </div>
             </div>
@@ -98,7 +98,8 @@
 
         <div class="mt-12 text-center border-t pt-10">
             <button id="retake-btn"
-                class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-12 rounded-lg transition duration-300 shadow-md text-lg">再測一次</button>
+                class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-12 rounded-lg transition duration-300 shadow-md text-lg"
+                @click="resetQuiz()">再測一次</button>
         </div>
     </div>
 </template>
@@ -106,6 +107,7 @@
 import DiscCard from '~/components/DiscCard.client.vue'
 import type { IDiscCard, ICharacter, IScore, IQuizOption, ISummary } from '~/types/discCard';
 const discStore = useDiscStore()
+const router = useRouter();
 const props = defineProps<{
     demonSlayerCharacters: ICharacter[],
     personalizedAdviceContent: any,
@@ -217,25 +219,26 @@ const traitInfo: {
 };
 
 onMounted(() => {
-    const quizData = [
-        {
-            text: "在生活中，我還是很講求效率",
-            trait: "D",
-            value: "2",
-        },
-        {
-            text: "在生活中，我還是很講求效率",
-            trait: "I",
-            value: "3",
-        },
-        {
-            text: "在生活中，我還是很講求效率",
-            trait: "S",
-            value: "1",
-        },
-    ]
-    quizNatural.value = quizData
-    quizWork.value = quizData
+    // const quizData = [
+    //     {
+    //         text: "在生活中，我還是很講求效率",
+    //         trait: "D",
+    //         value: "2",
+    //     },
+    //     {
+    //         text: "在生活中，我還是很講求效率",
+    //         trait: "I",
+    //         value: "3",
+    //     },
+    //     {
+    //         text: "在生活中，我還是很講求效率",
+    //         trait: "S",
+    //         value: "1",
+    //     },
+    // ]
+
+    quizNatural.value = discStore.quizData1
+    quizWork.value = discStore.quizData2
     const scoresNatural = calculateScore(quizNatural.value)
     const scoresWork = calculateScore(quizWork.value)
 
@@ -495,6 +498,14 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
     }
     return discCardTemp
 }
+
+function resetQuiz() {
+    discStore.setQuizData1([])
+    discStore.setQuizData2([])
+    router.push({
+        name: 'quiz'
+    })
+}
 </script>
 <style lang="scss" scoped>
 .nature__body {
@@ -553,6 +564,20 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
     border-left-width: 4px;
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
+}
+
+.suggestion__advice {
+    --tw-text-opacity: 1;
+    color: rgb(55 65 81 / var(--tw-text-opacity, 1));
+    padding: 1rem;
+
+    background-color: rgb(239 246 255 / 0.5);
+
+    --tw-border-opacity: 1;
+    border-color: rgb(191 219 254 / var(--tw-border-opacity, 1));
+
+    border-width: 1px;
+    border-radius: 0.375rem;
 }
 
 @media screen and (min-width:992px) {
