@@ -219,26 +219,20 @@ const traitInfo: {
 };
 
 onMounted(() => {
-    // const quizData = [
-    //     {
-    //         text: "在生活中，我還是很講求效率",
-    //         trait: "D",
-    //         value: "2",
-    //     },
-    //     {
-    //         text: "在生活中，我還是很講求效率",
-    //         trait: "I",
-    //         value: "3",
-    //     },
-    //     {
-    //         text: "在生活中，我還是很講求效率",
-    //         trait: "S",
-    //         value: "1",
-    //     },
-    // ]
-
-    quizNatural.value = discStore.quizData1
-    quizWork.value = discStore.quizData2
+    if (discStore.quizData1.length) {
+        sessionStorage.setItem('quizData1', JSON.stringify(discStore.quizData1))
+        quizNatural.value = discStore.quizData1
+    } else {
+        const quizData1Str = sessionStorage.getItem('quizData1');
+        quizNatural.value = quizData1Str ? JSON.parse(quizData1Str) : [];
+    }
+    if (discStore.quizData2.length) {
+        sessionStorage.setItem('quizData2', JSON.stringify(discStore.quizData2))
+        quizWork.value = discStore.quizData2
+    } else {
+        const quizData2Str = sessionStorage.getItem('quizData2');
+        quizWork.value = quizData2Str ? JSON.parse(quizData2Str) : [];
+    }
     const scoresNatural = calculateScore(quizNatural.value)
     const scoresWork = calculateScore(quizWork.value)
 
@@ -503,7 +497,7 @@ function resetQuiz() {
     discStore.setQuizData1([])
     discStore.setQuizData2([])
     router.push({
-        name: 'quiz'
+        name: 'quiz-1'
     })
 }
 </script>
