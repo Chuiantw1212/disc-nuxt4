@@ -1,3 +1,8 @@
+interface ILowTrait {
+    title: string,
+    description: string,
+}
+
 export interface IDiscCard {
     title: string,
     traits: {
@@ -23,7 +28,5 @@ export interface IDiscCard {
         S: number,
         C: number,
     },
-    lowTrait: {
-        description: string,
-    }
+    lowTraits: ILowTrait[]
 }

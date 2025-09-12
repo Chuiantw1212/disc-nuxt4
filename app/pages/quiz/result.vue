@@ -29,8 +29,7 @@
 
         <div id="detailed-analysis-container">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-700 border-t pt-10">兩大風格下的你</h3>
-            <disc-card :model-value="discCardInfo" :primaryStyle="primaryStyle" :details="details"
-                :coreTitle="coreTitle"></disc-card>
+            <disc-card :model-value="discCardInfo"></disc-card>
             <!-- <disc-card :scores="{
                 D: 24,
                 I: 24,
@@ -124,14 +123,12 @@ const props = defineProps<{
     combinedAnalysisContent: any,
     analysisContent: any,
     traitInfo: any,
+    lowScoreAnalysisContent: any,
 }>()
-// const lowScoresHtml = ref<string>('')
 const quizNatural = ref<any[]>([])
 const quizWork = ref<any[]>([])
 const summaryHtml = ref<string>('')
 const isEasterEggCharacter = ref<boolean>(false)
-const details = ref<any>({})
-const coreTitle = ref<string>('')
 const personalAdvice = ref<string>('')
 const LOW_SCORE_THRESHOLD = 11
 const discCardInfo = ref<IDiscCard>({
@@ -158,7 +155,8 @@ const discCardInfo = ref<IDiscCard>({
         I: 0,
         S: 0,
         C: 0,
-    }
+    },
+    lowTraits: [],
 })
 
 const discCardInfo2 = ref<IDiscCard>({
@@ -185,18 +183,8 @@ const discCardInfo2 = ref<IDiscCard>({
         I: 0,
         S: 0,
         C: 0,
-    }
-})
-
-interface IStyle {
-    label: string
-    color: string
-    description: string
-}
-const primaryStyle = ref<IStyle>({
-    label: "",
-    color: "",
-    description: "",
+    },
+    lowTraits: [],
 })
 
 interface IQuizOption {
@@ -270,12 +258,19 @@ onMounted(() => {
     const scoresNatural = calculateScore(quizNatural.value)
     const scoresWork = calculateScore(quizWork.value)
     // Disc Card
-    discCardInfo.value = getDiscCardInfo(scoresNatural)
+    discCardInfo.value = getDiscCardInfo({
+        type: 'natural',
+        scores: scoresNatural,
+    })
     discCardInfo.value.title = '1. 你的真實風格 (核心自我)'
     // Disc Card2
-    discCardInfo2.value = getDiscCardInfo(scoresWork)
+    discCardInfo2.value = getDiscCardInfo({
+        type: 'work',
+        scores: scoresWork,
+    })
     discCardInfo.value.title = '2. 你的外顯模樣 (公開形象)'
-    // displayResults(scoresNatural, scoresWork)
+
+    displayResults(scoresNatural, scoresWork)
 })
 
 function calculateScore(quizData: IQuizOption[]) {
@@ -451,7 +446,9 @@ function findCharacterMatch(scoresNatural: IScore, scoresWork: IScore): ICharact
     }
 }
 
-function getDiscCardInfo(scores: IScore) {
+function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
+    const scores: IScore = payload.scores
+    const infoType: string = payload.type
     const discCardTemp: IDiscCard = {
         title: '1. 你的真實風格 (核心自我)',
         scores,
@@ -472,6 +469,7 @@ function getDiscCardInfo(scores: IScore) {
             suggestion: "",
         },
         secondaryTrait: "",
+        lowTraits: [],
     }
 
     // featrues
@@ -490,39 +488,46 @@ function getDiscCardInfo(scores: IScore) {
     }
 
     // 主要風格
-    discCardInfo.value.traits.name = traitInfo[coreTraitKey].name
-    discCardInfo.value.traits.description = ''
+    discCardTemp.traits.name = traitInfo[coreTraitKey].name
+    discCardTemp.traits.description = ''
     if (primaryScore - secondaryScore <= 8 && primaryScore > 0 && secondaryScore > 0) {
         let combinedKey = coreTraitKey.toLowerCase() === 'i' ? 'i' + secondaryTraitKey : coreTraitKey + secondaryTraitKey.toLowerCase();
-        discCardInfo.value.traits.name = `${coreTraitKey}${secondaryTraitKey.toLowerCase()} 風格 (${traitInfo[coreTraitKey].shortName}/${traitInfo[secondaryTraitKey].shortName})`;
+        discCardTemp.traits.name = `${coreTraitKey}${secondaryTraitKey.toLowerCase()} 風格 (${traitInfo[coreTraitKey].shortName}/${traitInfo[secondaryTraitKey].shortName})`;
         if (props.combinedAnalysisContent[combinedKey]) {
-            discCardInfo.value.traits.description = props.combinedAnalysisContent[combinedKey].description;
+            discCardTemp.traits.description = props.combinedAnalysisContent[combinedKey].description;
         }
     }
 
     // TraitInfo
     const trainInfo = props.traitInfo[coreTraitKey]
-    discCardInfo.value.coreTrait.title = trainInfo.name
+    discCardTemp.coreTrait.title = trainInfo.name
 
     // 核心特質解析
     const traitAnalysis = props.analysisContent[coreTraitKey]
     const traitGroup = traitAnalysis['natural']
-    discCardInfo.value.coreTraitDetails = traitGroup
+    discCardTemp.coreTraitDetails = traitGroup
 
     // 低分特質
     const lowScoreTraits = traits.filter((trait) => {
         const score = trait[1]
         return score <= LOW_SCORE_THRESHOLD
     });
-    // if (lowScoreTraits.length > 0) {
-    //     lowScoresHtml = lowScoreTraits.map(([key,]) => {
-    //         const content = lowScoreAnalysisContent[key];
-    //         return `<div class="p-4 bg-gray-50/50 rounded-md border"><h5 class="font-bold text-gray-700">${content.title}</h5><p class="text-gray-600 mt-1">${content[section.context]}</p></div>`;
-    //     }
-    //     ).join('');
-    // } else {
-    //     lowScoresHtml = `<p class="text-center text-gray-500">在此情境下，您沒有特別缺乏的特質。</p>`;
-    // }
+    discCardTemp.lowTraits = []
+    if (lowScoreTraits.length > 0) {
+        lowScoreTraits.forEach((lowTrait) => {
+            const lowTraitKey = lowTrait[0]
+            const lowTraitContent = props.lowScoreAnalysisContent[lowTraitKey];
+            discCardTemp.lowTraits.push({
+                title: lowTraitContent.title,
+                description: lowTraitContent[infoType],
+            })
+        })
+        // lowScoresHtml = lowScoreTraits.map(([key,]) => {
+        //     const content = lowScoreAnalysisContent[key];
+        //     return `<div class="p-4 bg-gray-50/50 rounded-md border"><h5 class="font-bold text-gray-700">${content.title}</h5><p class="text-gray-600 mt-1">${content[section.context]}</p></div>`;
+        // }
+        // ).join('');
+    }
     return discCardTemp
 }
 </script>
@@ -573,7 +578,8 @@ function getDiscCardInfo(scores: IScore) {
 .result__characters {
     display: grid;
     gap: 1.5rem;
-    .characters__traits{
+
+    .characters__traits {
         margin: 1rem 0px;
         text-align: center;
     }
@@ -595,7 +601,7 @@ function getDiscCardInfo(scores: IScore) {
         }
     }
 
-    .result__characters{
+    .result__characters {
         grid-template-columns: auto auto;
     }
 }

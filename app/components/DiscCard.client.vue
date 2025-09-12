@@ -62,17 +62,11 @@
                 <p class="text-gray-600 mt-1">{{ modelValue.coreTraitDetails.suggestion }}</p>
             </div>
         </div>
-
-        <!-- Low Traits (slot or default) -->
-        <div class="lowTraits">
+        <div v-if="modelValue.lowTraits.length" class="lowTraits">
             <h5 class="font-bold text-lg text-gray-700 text-center mb-2">潛在的限制與挑戰 (低分特質)</h5>
-            <div class="trait__details">
-                <h5 class="font-bold text-gray-700">i 低（缺乏影響性）</h5>
-                <p class="text-gray-600 mt-1">話不多，社交主動性低，容易被認為冷冷的。</p>
-            </div>
-            <div class="trait__details">
-                <h5 class="font-bold text-gray-700">i 低（缺乏影響性）</h5>
-                <p class="text-gray-600 mt-1">話不多，社交主動性低，容易被認為冷冷的。</p>
+            <div v-for="(lowTrait, index) in modelValue.lowTraits" :key="index" class="trait__details">
+                <h5 class="font-bold text-gray-700">{{ lowTrait.title }}</h5>
+                <p class="text-gray-600 mt-1">{{ lowTrait.description }}</p>
             </div>
         </div>
     </div>
