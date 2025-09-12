@@ -1,7 +1,8 @@
 <template>
     <div id="result-screen" class="screen bg-white p-6 sm:p-8 rounded-xl shadow-lg active-screen">
         <div class="text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-gray-800"><span id="result-name">EN Chu</span>的測驗結果</h2>
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-gray-800"><span
+                    id="result-name">{{ userStore.user.name }}</span>的測驗結果</h2>
             <p class="text-gray-600 mb-8">以下是您在「真實風格」與「外顯模樣」兩種情境下的 DiSC 特質分析。</p>
         </div>
 
@@ -107,6 +108,7 @@
 import DiscCard from '~/components/DiscCard.client.vue'
 import type { IDiscCard, ICharacter, IScore, IQuizOption, ISummary } from '~/types/discCard';
 const discStore = useDiscStore()
+const userStore = useUserStore()
 const router = useRouter();
 const props = defineProps<{
     demonSlayerCharacters: ICharacter[],
@@ -441,7 +443,7 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
 
     // featrues
     const traits: [string, number][] = getTraitsSorted(scores)
-    let coreTraitKey = ''
+    let coreTraitKey: string = ''
     let primaryScore = 0
     let secondaryTraitKey = ''
     let secondaryScore = 0
@@ -468,6 +470,7 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
     // TraitInfo
     const trainInfo = props.traitInfo[coreTraitKey]
     discCardTemp.coreTrait.title = trainInfo.name
+    discCardTemp.coreTrait.key = coreTraitKey as any
 
     // 核心特質解析
     const traitAnalysis = props.analysisContent[coreTraitKey]

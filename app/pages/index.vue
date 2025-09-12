@@ -23,13 +23,13 @@
             </div>
             <div class="mt-8">
                 <label for="name-input" class="block text-center text-gray-700 font-bold mb-2">請輸入您的姓名或暱稱</label>
-                <input v-model="form.name" type="text" id="name-input"
+                <input v-model="userForm.name" type="text" id="name-input"
                     class="w-full max-w-sm mx-auto block p-3 border border-gray-300 rounded-lg text-center"
                     placeholder="您的姓名">
-                <label for="name-input" class="block text-center text-gray-700 font-bold mb-2 mt-4">請輸入您的Email</label>
-                <input v-model="form.name" type="text" id="name-input"
+                <!-- <label for="name-input" class="block text-center text-gray-700 font-bold mb-2 mt-4">請輸入您的Email</label>
+                <input v-model="userForm.name" type="text" id="name-input"
                     class="w-full max-w-sm mx-auto block p-3 border border-gray-300 rounded-lg text-center"
-                    placeholder="您的Email">
+                    placeholder="您的Email"> -->
             </div>
             <div class="mt-8 text-center">
                 <button id="start-btn"
@@ -40,12 +40,16 @@
     </div>
 </template>
 <script setup lang="ts">
-const form = ref({
+import type { IUser } from '~/types/user'
+
+const userStore = useUserStore()
+const userForm = ref<IUser>({
     name: '',
     email: ''
 })
 
 function starQuiz() {
+    userStore.setUser(userForm.value)
     navigateTo({
         name: 'quiz-1'
     })

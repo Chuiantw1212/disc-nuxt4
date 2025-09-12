@@ -12,11 +12,5 @@ export const useDiscStore = defineStore('discStore', {
         setQuizData2(quizData: Array<any>) {
             this.quizData2 = quizData
         }
-        // async fetch() {
-        //     const infos = await $fetch('https://api.nuxt.com/modules/pinia')
-
-        //     this.name = infos.name
-        //     this.description = infos.description
-        // }
     }
 })

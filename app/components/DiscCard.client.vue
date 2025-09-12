@@ -7,22 +7,21 @@
             <div class="nature__body__chart">
                 <canvas ref="canvasEl" class="block box-border h-full w-full"></canvas>
             </div>
-
             <!-- Score Squares -->
             <div class="analysis__traitSquares">
-                <div class="trait__square">
+                <div class="trait__square" :class="{ 'trait__square--primary': modelValue.coreTrait.key === 'D' }">
                     <h5 class="text-base font-bold text-gray-800">支配型 (D)</h5>
                     <p class="square__value" :style="{ color: colors.D }">{{ modelValue.scores.D }}</p>
                 </div>
-                <div class="trait__square">
+                <div class="trait__square" :class="{ 'trait__square--primary': modelValue.coreTrait.key === 'I' }">
                     <h5 class="text-base font-bold text-gray-800">影響型 (i)</h5>
                     <p class="square__value" :style="{ color: colors.I }">{{ modelValue.scores.I }}</p>
                 </div>
-                <div class="trait__square primary">
+                <div class="trait__square" :class="{ 'trait__square--primary': modelValue.coreTrait.key === 'C' }">
                     <h5 class="text-base font-bold text-gray-800">謹慎型 (C)</h5>
                     <p class="square__value" :style="{ color: colors.C }">{{ modelValue.scores.C }}</p>
                 </div>
-                <div class="trait__square">
+                <div class="trait__square" :class="{ 'trait__square--primary': modelValue.coreTrait.key === 'S' }">
                     <h5 class="text-base font-bold text-gray-800">穩健型 (S)</h5>
                     <p class="square__value" :style="{ color: colors.S }">{{ modelValue.scores.S }}</p>
                 </div>
@@ -118,11 +117,11 @@ let chart: Chart | null = null
 const buildData = (): ChartData<'radar'> => {
     const { D, I, C, S } = props.modelValue.scores
     return {
-        labels: ['D', 'I', 'C', 'S'],
+        labels: ['D', 'I', 'S', 'C'],
         datasets: [
             {
                 label: 'Natural',
-                data: [D, I, C, S],
+                data: [D, I, S, C],
                 // 背景/邊框色用主要色（C）的半透明系
                 backgroundColor: 'rgba(234, 179, 8, 0.15)',
                 borderColor: props.colors.C,
@@ -246,6 +245,13 @@ watch(() => props.modelValue.scores, (next) => {
                 margin-top: 0.25rem;
                 margin-bottom: 0.25rem;
             }
+        }
+
+        .trait__square--primary {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            border-color: #14b8a6;
+            background-color: #f0fdfa;
         }
     }
 }
