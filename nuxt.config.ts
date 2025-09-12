@@ -1,13 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   modules: [
     '@nuxt/image',
     '@pinia/nuxt',
     '@element-plus/nuxt',
     '@nuxtjs/google-fonts',
-    'pinia-plugin-persistedstate/nuxt',
+    '@nuxt/devtools',
   ],
   googleFonts: {
     families: {

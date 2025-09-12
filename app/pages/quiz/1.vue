@@ -12,7 +12,7 @@
         </div>
         <form>
             <div class="space-y-4">
-                <div v-for="(quiz, index) in shuffledArray" :key="index" class="form__question">
+                <div v-for="(quiz, index) in shuffledArray" :key="index" ref="questionRefs" class="form__question">
                     <h4 class="question__text">{{ quiz.text }}</h4>
                     <div class="question__options">
                         <label class="options__label">
@@ -50,6 +50,7 @@
 import { ElMessage } from 'element-plus'
 const route = useRoute()
 const router = useRouter()
+const questionRefs = ref<(HTMLElement | null)[]>([])
 const discStore = useDiscStore()
 const quizData = [{
     text: "在生活中，我還是很講求效率",
@@ -114,7 +115,7 @@ onMounted(() => {
     }
 })
 
-function setQuizData() {
+async function setQuizData() {
     const emptyIndex: number = Array.from(shuffledArray.value).findIndex((q: any) => {
         return q.value === ''
     })
@@ -125,6 +126,8 @@ function setQuizData() {
             type: 'info',
             placement: 'bottom',
         })
+        await nextTick()
+        scrollToQuestion(emptyIndex)
         return
     }
     discStore.setQuizData1(shuffledArray.value)
@@ -151,6 +154,14 @@ function shuffleArray(array: Array<any>) {
     }
 
     return array;
+}
+
+function scrollToQuestion(index: number) {
+    const el = questionRefs.value[index]
+    if (!el) return
+
+    // 平滑捲動到畫面中間
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div id="result-screen" class="screen bg-white p-6 sm:p-8 rounded-xl shadow-lg active-screen">
         <div class="text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-gray-800"><span
+            <h2 v-if="userStore.user" class="text-3xl sm:text-4xl font-bold mb-4 text-gray-800"><span
                     id="result-name">{{ userStore.user.name }}</span>的測驗結果</h2>
             <p class="text-gray-600 mb-8">以下是您在「真實風格」與「外顯模樣」兩種情境下的 DiSC 特質分析。</p>
         </div>
@@ -221,6 +221,14 @@ const traitInfo: {
 };
 
 onMounted(() => {
+    if (userStore.user?.name) {
+        sessionStorage.setItem('user', JSON.stringify(userStore.user))
+    } else {
+        const userDataStr = sessionStorage.getItem('user')
+        const userData = userDataStr ? JSON.parse(userDataStr) : {}
+        userStore.setUser(userData)
+    }
+
     if (discStore.quizData1.length) {
         sessionStorage.setItem('quizData1', JSON.stringify(discStore.quizData1))
         quizNatural.value = discStore.quizData1
@@ -497,10 +505,11 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
 }
 
 function resetQuiz() {
+    userStore.clearUser()
     discStore.setQuizData1([])
     discStore.setQuizData2([])
     router.push({
-        name: 'quiz-1'
+        name: 'index'
     })
 }
 </script>
