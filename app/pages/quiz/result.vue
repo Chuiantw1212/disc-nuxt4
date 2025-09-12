@@ -50,38 +50,8 @@
             <div class="border-t pt-10">
                 <h3 class="text-2xl font-bold text-center mb-6 text-gray-700">最接近你的鬼滅之刃角色</h3>
                 <div class="result__characters">
-                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm flex flex-col">
-                        <div class="text-center">
-                            <p class="text-gray-500 text-sm">蟲柱繼子</p>
-                            <h4 class="text-2xl font-bold text-gray-800">栗花落香奈乎</h4>
-                        </div>
-                        <div class="characters__traits">
-                            <p><strong>外在風格:</strong> <span class="font-bold"
-                                    style="color: rgb(234, 179, 8);">謹慎型</span></p>
-                            <p><strong>內在風格:</strong> <span class="font-bold"
-                                    style="color: rgb(59, 130, 246);">穩健型</span> / <span class="font-bold"
-                                    style="color: rgb(234, 179, 8);">謹慎型</span></p>
-                        </div>
-                        <p class="text-gray-600 text-center flex-grow">
-                            外在表現得極度沉默、被動，只遵循命令，給人一種空洞的感覺。但她的內心，其實是「聽從心的聲音」的渴望與對夥伴的深厚情感，以及為此而進行嚴格修煉的堅韌。是從純粹的服從，蛻變為溫柔守護者的代表。
-                        </p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm flex flex-col">
-                        <div class="text-center">
-                            <p class="text-gray-500 text-sm">盜帳號駭客 / 純愛畫家</p>
-                            <h4 class="text-2xl font-bold text-gray-800">愈史郎</h4>
-                        </div>
-                        <div class="characters__traits">
-                            <p><strong>外在風格:</strong> <span class="font-bold"
-                                    style="color: rgb(234, 179, 8);">謹慎型</span> / <span class="font-bold"
-                                    style="color: rgb(34, 197, 94);">支配型</span></p>
-                            <p><strong>內在風格:</strong> <span class="font-bold"
-                                    style="color: rgb(59, 130, 246);">穩健型</span> / <span class="font-bold"
-                                    style="color: rgb(234, 179, 8);">謹慎型</span></p>
-                        </div>
-                        <p class="text-gray-600 text-center flex-grow">
-                            外在冷漠挑剔，只在守護珠世時展現攻擊性。其內心，是對珠世絕對的忠誠與依賴，並透過極致的專注與細心來體現這份守護。他的溫柔，是深思熟慮且完美主義的。</p>
-                    </div>
+                    <character-card v-if="firstCharacter" :model-value="firstCharacter"></character-card>
+                    <character-card v-if="secondCharacter" :model-value="secondCharacter"></character-card>
                 </div>
             </div>
         </div>
@@ -114,8 +84,7 @@
 </template>
 <script setup lang="ts">
 import DiscCard from '~/components/DiscCard.client.vue'
-import { Chart } from 'chart.js'
-import type { IDiscCard } from '~/types/discCard';
+import type { IDiscCard, ICharacter, IScore, IQuizOption } from '~/types/discCard';
 const discStore = useDiscStore()
 const props = defineProps<{
     demonSlayerCharacters: ICharacter[],
@@ -187,28 +156,8 @@ const discCardInfo2 = ref<IDiscCard>({
     lowTraits: [],
 })
 
-interface IQuizOption {
-    text: string,
-    trait: 'D' | 'I' | 'S' | 'C',
-    value: string
-}
-interface IScore {
-    [key: string]: any,
-    D: number,
-    I: number,
-    S: number,
-    C: number
-}
-interface ICharacter {
-    name: string,
-    role: string,
-    outer: string,
-    inner: string,
-    description: string,
-    lowTrait: string,
-    lowTraitContext: string,
-    isEasterEgg: boolean,
-}
+const firstCharacter = ref<ICharacter>()
+const secondCharacter = ref<ICharacter>()
 
 const traitInfo: {
     [key: string]: any
@@ -294,6 +243,9 @@ function getTraitsSorted(score: IScore): [string, number][] {
 
 function displayResults(scoresNatural: IScore, scoresWork: IScore) {
     const matchedCharacters = findCharacterMatch(scoresNatural, scoresWork)
+    console.log({
+        matchedCharacters
+    })
     isEasterEggCharacter.value = false
     if (matchedCharacters[0] && matchedCharacters[0].isEasterEgg) {
         // 平均者
@@ -303,6 +255,8 @@ function displayResults(scoresNatural: IScore, scoresWork: IScore) {
         generateSummaryAnalysis(scoresNatural, scoresWork);
         generatePersonalizedAdvice(scoresWork)
     }
+    firstCharacter.value = matchedCharacters[0]
+    secondCharacter.value = matchedCharacters[1]
 }
 
 function generatePersonalizedAdvice(scoresWork: IScore) {
@@ -504,7 +458,7 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
 
     // 核心特質解析
     const traitAnalysis = props.analysisContent[coreTraitKey]
-    const traitGroup = traitAnalysis['natural']
+    const traitGroup = traitAnalysis[infoType]
     discCardTemp.coreTraitDetails = traitGroup
 
     // 低分特質
@@ -522,11 +476,6 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
                 description: lowTraitContent[infoType],
             })
         })
-        // lowScoresHtml = lowScoreTraits.map(([key,]) => {
-        //     const content = lowScoreAnalysisContent[key];
-        //     return `<div class="p-4 bg-gray-50/50 rounded-md border"><h5 class="font-bold text-gray-700">${content.title}</h5><p class="text-gray-600 mt-1">${content[section.context]}</p></div>`;
-        // }
-        // ).join('');
     }
     return discCardTemp
 }
@@ -578,11 +527,6 @@ function getDiscCardInfo(payload: { type: string; scores: IScore; }) {
 .result__characters {
     display: grid;
     gap: 1.5rem;
-
-    .characters__traits {
-        margin: 1rem 0px;
-        text-align: center;
-    }
 }
 
 @media screen and (min-width:992px) {
