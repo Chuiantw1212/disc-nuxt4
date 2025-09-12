@@ -29,12 +29,8 @@
 
         <div id="detailed-analysis-container">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-700 border-t pt-10">兩大風格下的你</h3>
-            <disc-card :model-value="discCardInfo" :scores="{
-                D: 24,
-                I: 24,
-                C: 24,
-                S: 24,
-            }" :primaryStyle="primaryStyle" :details="details" :coreTitle="coreTitle"></disc-card>
+            <disc-card :model-value="discCardInfo" :primaryStyle="primaryStyle" :details="details"
+                :coreTitle="coreTitle"></disc-card>
             <!-- <disc-card :scores="{
                 D: 24,
                 I: 24,
@@ -140,7 +136,10 @@ const personalAdvice = ref<string>('')
 const discCardInfo = ref<IDiscCard>({
     title: "",
     traits: "",
-    primaryTrait: "",
+    primaryTrait: {
+        title: '',
+        key: '',
+    },
     primartTraitDescription: "",
     primaryTraitDetails: "",
     secondaryTrait: "",
@@ -155,7 +154,10 @@ const discCardInfo = ref<IDiscCard>({
 const discCardInfo2 = ref<IDiscCard>({
     title: "",
     traits: "",
-    primaryTrait: "",
+    primaryTrait: {
+        title: '',
+        key: '',
+    },
     primartTraitDescription: "",
     primaryTraitDetails: "",
     secondaryTrait: "",
@@ -462,7 +464,7 @@ function drawCharts(scoresNatural: IScore, scoresWork: IScore) {
 
         // TraitInfo
         const trainInfo = props.traitInfo[primaryTraitKey]
-        coreTitle.value = trainInfo.name
+        discCardInfo.value.primaryTrait.title = trainInfo.name
 
         // 核心特質解析
         const traitAnalysis = props.analysisContent[primaryTraitKey]

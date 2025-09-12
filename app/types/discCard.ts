@@ -1,7 +1,10 @@
 export interface IDiscCard {
     title: string,
     traits: string,
-    primaryTrait: 'D' | 'I' | 'S' | 'C' | '',
+    primaryTrait: {
+        key: 'D' | 'I' | 'S' | 'C' | '',
+        title: string,
+    },
     primartTraitDescription: string,
     primaryTraitDetails: string,
     secondaryTrait: 'D' | 'I' | 'S' | 'C' | '',

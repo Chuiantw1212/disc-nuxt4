@@ -40,7 +40,7 @@
 
         <!-- Core Traits (slot or default) -->
         <div class="space-y-4 text-left mt-6">
-            <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 ({{ coreTitle }})</h5>
+            <h5 class="font-bold text-lg text-gray-700 text-center mb-2">核心特質解析 ({{ modelValue.primaryTrait.title }})</h5>
             <div class="trait__details">
                 <h5 class="font-bold text-gray-700">描述：</h5>
                 <p class="text-gray-600 mt-1">{{ details.description }}</p>
@@ -88,9 +88,7 @@ type ColorMap = { D: string; I: string; C: string; S: string, [key: string]: str
 const styleColor = ref<string>('')
 const props = withDefaults(defineProps<{
     modelValue: IDiscCard,
-    title?: string
     coreTitle?: string
-    scores: Scores
     colors?: ColorMap
     primaryStyle?: {
         label: string
@@ -105,7 +103,6 @@ const props = withDefaults(defineProps<{
         suggestion: string;
     }
 }>(), {
-    title: '1. 你的真實風格 (核心自我)',
     coreTitle: '謹慎型 (C)',
     colors: () => ({
         D: 'rgb(34,197,94)',   // green-500
@@ -146,7 +143,7 @@ const canvasEl = ref<HTMLCanvasElement | null>(null)
 let chart: Chart | null = null
 
 const buildData = (): ChartData<'radar'> => {
-    const { D, I, C, S } = props.scores
+    const { D, I, C, S } = props.modelValue.scores
     return {
         labels: ['D', 'I', 'C', 'S'],
         datasets: [
@@ -185,13 +182,14 @@ const options: ChartOptions<'radar'> = {
 
 function drawChart() {
     if (!canvasEl.value) return
+    const { scores } = props.modelValue
     chart = new Chart(canvasEl.value, {
         type: 'radar',
         data: {
             labels: ['D', 'I', 'S', 'C'],
             datasets: [{
                 label: '分數',
-                data: [props.scores.D, props.scores.I, props.scores.S, props.scores.C],
+                data: [scores.D, scores.I, scores.S, scores.C],
                 backgroundColor: `rgba(20, 184, 166, 0.2)`,
                 borderColor: `rgba(13, 148, 136, 1)`,
                 pointBackgroundColor: `rgba(13, 148, 136, 1)`,
