@@ -2,8 +2,8 @@
   "functions": {
     "source": ".output/server",
     "runtime": "nodejs20",
-     "predeploy": [
-      "npm --prefix .output/server ci || npm --prefix .output/server i"
+    "predeploy": [
+      "npm install"
     ]
   },
   "hosting": {

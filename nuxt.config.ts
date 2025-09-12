@@ -34,6 +34,7 @@ export default defineNuxtConfig({
   // },
   nitro: {
     // 使用 Firebase Functions Gen2
+    preset: 'firebase',
     firebase: {
       gen: 2,
       httpsOptions: {
