@@ -1,7 +1,10 @@
 {
   "functions": {
     "source": ".output/server",
-    "runtime": "nodejs20"
+    "runtime": "nodejs20",
+     "predeploy": [
+      "npm --prefix .output/server ci || npm --prefix .output/server i"
+    ]
   },
   "hosting": {
     "public": ".output/public",
