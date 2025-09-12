@@ -9,7 +9,8 @@
     "rewrites": [
       {
         "source": "**",
-        "function": "server"
+        "function": "server",
+        "pinTag": true
       }
     ],
     "ignore": [

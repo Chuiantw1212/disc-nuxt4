@@ -38,7 +38,7 @@ export default defineNuxtConfig({
       gen: 2,
       httpsOptions: {
         region: 'asia-east1', // 換你就近的區域
-        maxInstances: 3
+        maxInstances: 1
       },
       nodeVersion: '20'
     }
