@@ -17,7 +17,6 @@ export default defineNuxtConfig({
     preload: true,    // adds <link rel="preload">
   },
   css: ['~/assets/main.css', '~/assets/tailwind.css'],
-  ssr: false,
   // // 1) 預設所有頁面都預渲染
   // routeRules: {
   //   '/**': { prerender: true },
