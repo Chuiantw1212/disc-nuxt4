@@ -48,10 +48,10 @@
                 </div>
             </div>
         </div>
-
+<!-- 
         <div class="my-8 text-center text-gray-500 text-sm p-4 bg-gray-50 rounded-lg">
             <p>此測驗是用vibe coding完成的陽春版，目前忘形還沒學會分享，所以歡迎你截圖分享XD</p>
-        </div>
+        </div> -->
 
         <div id="detailed-analysis-container">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-700 border-t pt-10">兩大風格下的你</h3>
@@ -79,11 +79,11 @@
 
         <div class="mt-10 border-t pt-8">
             <div class="max-w-2xl mx-auto space-y-4">
-                <a href="https://reurl.cc/DOj6lN" target="_blank"
+                <!-- <a href="https://reurl.cc/DOj6lN" target="_blank"
                     class="block w-full bg-teal-500 hover:bg-teal-600 text-white font-bold text-center py-4 px-6 rounded-lg transition duration-300 shadow-lg text-xl">
                     <div>想更了解你自己？</div>
                     <div class="text-base font-medium mt-1">0913下午的四師講座在台北，帶你更好的探索自己</div>
-                </a>
+                </a> -->
                 <a href="https://www.pressplay.cc/project/08F1A8E56FFBD1641A4EC29E3DB7735A" target="_blank"
                     class="block w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-center py-4 px-6 rounded-lg transition duration-300 shadow-lg text-xl">
                     <div>DiSC人心洞悉術線上課</div>
